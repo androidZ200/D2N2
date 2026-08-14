@@ -75,8 +75,6 @@ classdef SQMDOE < DOE
 
         function imag = imagesc(obj)
             im = obj.type.imagesc(obj.mesh.X, obj.mesh.Y, angle(obj.get_transmission_function()));
-            colorbar;
-            axis square;
             if nargout > 0
                 imag = im;
             end

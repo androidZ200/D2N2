@@ -76,8 +76,6 @@ classdef CylindricalDOE < DOE & MatrixPropagator
 
         function imag = imagesc(obj)
             im = obj.type.imagesc(obj.mesh.X, obj.mesh.Y, repmat(obj.data, 1+(size(obj.data)==1).*(size(obj.mesh)-1)));
-            colorbar;
-            axis square;
             if nargout > 0
                 imag = im;
             end

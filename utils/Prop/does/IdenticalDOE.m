@@ -16,9 +16,8 @@ classdef IdenticalDOE < TypeDOE
             data = inp_data;
         end
         function im = imagesc(obj, X, Y, data)
-            subplot(1,2,1); imagesc(X, Y, angle(data), [-pi pi]); colormap(obj.ssau);
-            subplot(1,2,2); imagesc(X, Y, abs(data)); colormap(gray);
-            im = gca;
+            im(1) = subplot(1,2,1); imagesc(X, Y, angle(data), [-pi pi]); colormap(im(1), obj.ssau);
+            im(2) = subplot(1,2,2); imagesc(X, Y, abs(data)); colormap(im(2), gray);
         end
     end
 end

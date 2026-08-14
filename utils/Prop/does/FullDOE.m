@@ -53,8 +53,6 @@ classdef FullDOE < DOE
 
         function imag = imagesc(obj)
             im = obj.type.imagesc(obj.mesh.X, obj.mesh.Y, obj.data);
-            colorbar;
-            axis square;
             if nargout > 0
                 imag = im;
             end
