@@ -1,7 +1,7 @@
 classdef BeamSplitter < Prop
     properties(SetAccess=private)
         prev_node;
-        mesh Mesh;
+        mesh;
     end
     properties(Access=private)
         field;
@@ -14,6 +14,7 @@ classdef BeamSplitter < Prop
             mustBeA(prev, "Encoder");
             obj.prev_node = prev;
             if nargin > 1
+                mustBeA(mesh, "Mesh");
                 obj.mesh = mesh;
                 obj.prev_node.set_output_mesh(mesh);
             else
@@ -24,9 +25,11 @@ classdef BeamSplitter < Prop
         function mesh = input_mesh(obj)
             mesh = obj.mesh;
         end
+
         function mesh = output_mesh(obj)
             mesh = obj.mesh;
         end
+
         function set_output_mesh(obj, mesh)
             mustBeA(mesh, "Mesh");
             if isempty(obj.mesh)
@@ -36,6 +39,7 @@ classdef BeamSplitter < Prop
                 error('The Meshes dont match');
             end
         end
+
         function field = get_field(obj, input)
             if isempty(obj.field)
                 obj.field = obj.prev_node.get_field(input);
@@ -43,9 +47,11 @@ classdef BeamSplitter < Prop
             field = obj.field;
             obj.counter = obj.counter + 1;
         end
+
         function need = need_error_field(obj)
             need = obj.prev_node.need_error_field();
         end
+
         function set_error_field(obj, error)
             if isempty(obj.error)
                 obj.error = error;
@@ -57,12 +63,14 @@ classdef BeamSplitter < Prop
                 obj.prev_node.set_error_field(obj.error);
             end
         end
+
         function gradient_step(obj, speed)
             if ~isempty(obj.error)
                 obj.prev_node.gradient_step(speed);
                 obj.error = [];
             end
         end
+
         function clear(obj)
             if ~isempty(obj.field)
                 obj.error = [];
