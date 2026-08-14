@@ -3,9 +3,8 @@ classdef AmplitudeDOE < TypeDOE
         function field = get_transmission_function(obj, data)
             field = obj.sigmoid(data);
         end
-        function gradient = get_gradient(obj, error, data)
-            sig = obj.get_transmission_function(data);
-            gradient = real(error).*sig.*(1 - sig);
+        function gradient = get_gradient(~, error, trans_func, ~)
+            gradient = real(error.*trans_func.*(1 - trans_func));
         end
         function data = get_data_from(~, inp_data)
             data = real(inp_data);

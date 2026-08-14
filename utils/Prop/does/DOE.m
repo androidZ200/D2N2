@@ -13,7 +13,7 @@ classdef (Abstract) DOE < Prop
     methods (Abstract)
         get_transmission_function();
         is_trainable();
-        get_gradient(error);
+        get_gradient(error, trans_func);
         make_gradient_step(gradient, speed);
     end
 
@@ -38,10 +38,9 @@ classdef (Abstract) DOE < Prop
             need = obj.is_trainable() || obj.prev_node.need_error_field();
         end
 
-        function set_error_field(obj, error)
-            error = error.*obj.TF;
+        function set_error_field(obj, Error_field)
             if obj.is_trainable()
-                grad = obj.get_gradient(error.*obj.Input_field);
+                grad = obj.get_gradient(Error_field.*obj.Input_field, obj.TF);
                 sumdim = setdiff(find(size(grad) > 1), [1 2]);
                 if ~isempty(sumdim); grad = sum(grad,sumdim); end
                 if isempty(obj.Gradient)
@@ -51,7 +50,7 @@ classdef (Abstract) DOE < Prop
                 end
             end
             if obj.prev_node.need_error_field()
-                obj.prev_node.set_error_field(error);
+                obj.prev_node.set_error_field(Error_field.*obj.TF);
             end
         end
 

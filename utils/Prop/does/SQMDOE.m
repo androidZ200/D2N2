@@ -44,12 +44,12 @@ classdef SQMDOE < DOE
             end
         end
 
-        function gradient = get_gradient(obj, error)
-            gradient = error.*obj.mask;
+        function gradient = get_gradient(obj, error, trans_func)
+            gradient = error.*obj.mask.*trans_func;
             gradient = sum(gradient.*(obj.iy == permute(1:size(obj.out_mesh.Y,2), [1 4 3 2])), 2);
             gradient = permute(gradient, [1 2 5 4 3]);
             gradient = sum(gradient.*(obj.ix == permute(1:size(obj.out_mesh.X,1), [1 3 2 4])), 1);
-            gradient = obj.type.get_gradient(gradient, obj.data);
+            gradient = obj.type.get_gradient(gradient, 1, obj.data);
             gradient = squeeze(gradient);
         end
 

@@ -9,8 +9,8 @@ classdef PhaseDOE < TypeDOE
         function field = get_transmission_function(~, data)
             field = exp(1i*data);
         end
-        function gradient = get_gradient(~, error, ~)
-            gradient = -imag(error);
+        function gradient = get_gradient(~, error, trans_func, ~)
+            gradient = real(1i*error.*trans_func);
         end
         function data = get_data_from(~, inp_data)
             data = real(inp_data);
