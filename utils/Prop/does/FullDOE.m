@@ -1,13 +1,16 @@
 classdef FullDOE < DOE
     properties (SetAccess=private)
-        data;
         mask;
         optimizer;
+        type;
     end
 
     methods
         function obj = FullDOE(prev, Mesh, type, optimizer_fabric)
-            obj = obj@DOE(prev, Mesh, type);
+            obj = obj@DOE(prev, Mesh);
+            mustBeA(type, "TypeDOE");
+            obj.type = type;
+            obj.type.create(size(Mesh));
             if nargin < 4
                 obj.optimizer = [];
                 obj.mask = 0;
@@ -15,14 +18,10 @@ classdef FullDOE < DOE
                 obj.optimizer = optimizer_fabric.generate(Mesh);
                 obj.mask = 1;
             end
-            obj.data = GPUTest(zeros(size(Mesh)));
         end
 
         function obj = set_data(obj, data)
-            if ~isequal(size(data), size(obj.data))
-                error("the sizes of the arrays do not match");
-            end
-            obj.data = GPUTest(obj.type.get_data_from(data));
+            obj.type.set_data(data);
         end
 
         function obj = set_mask(obj, mask)
@@ -33,8 +32,8 @@ classdef FullDOE < DOE
             end
         end
 
-        function gradient = get_gradient(obj, error, trans_func)
-            gradient = obj.type.get_gradient(error, trans_func, obj.data);
+        function gradient = get_gradient(obj, error, ~)
+            gradient = obj.type.get_gradient(error);
         end
 
         function is = is_trainable(obj)
@@ -42,17 +41,17 @@ classdef FullDOE < DOE
         end
 
         function field = get_transmission_function(obj)
-            field = obj.type.get_transmission_function(obj.data);
+            field = obj.type.get_transmission_function();
         end
 
         function make_gradient_step(obj, gradient, speed)
             if obj.is_trainable()
-                obj.data = obj.data - speed * obj.optimizer.optimize(gradient).*obj.mask;
+                obj.type.make_gradient_step(-speed*obj.optimizer.optimize(gradient).*obj.mask)
             end
         end
 
         function imag = imagesc(obj)
-            im = obj.type.imagesc(obj.mesh.X, obj.mesh.Y, obj.data);
+            im = obj.type.imagesc(obj.mesh.X, obj.mesh.Y);
             if nargout > 0
                 imag = im;
             end

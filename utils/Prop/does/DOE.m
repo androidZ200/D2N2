@@ -2,7 +2,6 @@ classdef (Abstract) DOE < Prop
     properties (SetAccess=protected)
         mesh Mesh;
         prev_node;
-        type;
     end
     properties (Access=protected)
         Input_field;
@@ -18,12 +17,10 @@ classdef (Abstract) DOE < Prop
     end
 
     methods
-        function obj = DOE(prev, Mesh, type)
+        function obj = DOE(prev, Mesh)
             obj.mesh = Mesh;
             mustBeA(prev, "Encoder");
             obj.prev_node = prev;
-            mustBeA(type, "TypeDOE");
-            obj.type = type;
             obj.prev_node.set_output_mesh(obj.mesh);
         end
 

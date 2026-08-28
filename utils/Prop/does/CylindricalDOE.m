@@ -3,16 +3,19 @@ classdef CylindricalDOE < DOE & MatrixPropagator
         data;
         mask;
         optimizer;
+        type;
     end
 
     methods
         function obj = CylindricalDOE(prev, Mesh, type, dim, optimizer_fabric)
-            obj = obj@DOE(prev, Mesh, type);
+            obj = obj@DOE(prev, Mesh);
+            mustBeA(type, "TypeDOE");
+            obj.type = type;
             switch dim
                 case "X"
-                    obj.data = GPUTest(zeros(size(Mesh.X)));
+                    obj.type.create(size(Mesh.X));
                 case "Y"
-                    obj.data = GPUTest(zeros(size(Mesh.Y)));
+                    obj.type.create(size(Mesh.Y));
                 otherwise
                     error("dimension not exist");
             end
@@ -26,10 +29,7 @@ classdef CylindricalDOE < DOE & MatrixPropagator
         end
 
         function obj = set_data(obj, data)
-            if ~isequal(size(data), size(obj.data))
-                error("the sizes of the arrays do not match");
-            end
-            obj.data = GPUTest(obj.type.get_data_from(data));
+            obj.type.set_data(data);
         end
 
         function obj = set_mask(obj, mask)
@@ -40,9 +40,9 @@ classdef CylindricalDOE < DOE & MatrixPropagator
             end
         end
 
-        function gradient = get_gradient(obj, error, trans_func)
-            gradient = obj.type.get_gradient(error, trans_func, obj.data);
-            gradient = mean(gradient, find(size(obj.data)==1));
+        function gradient = get_gradient(obj, error, ~)
+            gradient = obj.type.get_gradient(error);
+            gradient = mean(gradient, find(size(obj.type)==1));
         end
 
         function is = is_trainable(obj)
@@ -50,32 +50,36 @@ classdef CylindricalDOE < DOE & MatrixPropagator
         end
 
         function field = get_transmission_function(obj)
-            field = obj.type.get_transmission_function(obj.data);
+            field = obj.type.get_transmission_function();
         end
 
         function make_gradient_step(obj, gradient, speed)
             if obj.is_trainable()
-                obj.data = obj.data - speed * obj.optimizer.optimize(gradient).*obj.mask;
+                obj.type.make_gradient_step(-speed*obj.optimizer.optimize(gradient).*obj.mask)
             end
         end
 
         function M = get_left(obj)
-            if size(obj.data,1) == 1
+            if size(obj.type,1) == 1
                 M = eye(obj.size(1));
             else
-                M = diag(obj.type.get_transmission_function(obj.data));
+                M = diag(obj.type.get_transmission_function());
             end
         end
         function M = get_right(obj)
-            if size(obj.data,1) == 1
-                M = diag(obj.type.get_transmission_function(obj.data));
+            if size(obj.type,1) == 1
+                M = diag(obj.type.get_transmission_function());
             else
                 M = eye(obj.size(2));
             end
         end
 
         function imag = imagesc(obj)
-            im = obj.type.imagesc(obj.mesh.X, obj.mesh.Y, repmat(obj.data, 1+(size(obj.data)==1).*(size(obj.mesh)-1)));
+            if size(obj.type,1) == 1
+                im = obj.type.imagesc(0, obj.mesh.Y);
+            else
+                im = obj.type.imagesc(obj.mesh.X, 0);
+            end
             if nargout > 0
                 imag = im;
             end

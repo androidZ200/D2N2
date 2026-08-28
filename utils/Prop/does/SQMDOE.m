@@ -1,6 +1,6 @@
 classdef SQMDOE < DOE
     properties (SetAccess=private)
-        data;
+        Qad;
         mask;
         optimizer;
         out_mesh;
@@ -14,9 +14,9 @@ classdef SQMDOE < DOE
     
     methods
         function obj = SQMDOE(prev, Mesh, out_mesh, wavelength, distance, optimizer_fabric)
-            obj = obj@DOE(prev, Mesh, PhaseDOE());
+            obj = obj@DOE(prev, Mesh);
             obj.out_mesh = out_mesh;
-            obj.data = GPUTest(zeros([1, 1, size(out_mesh)]));
+            obj.Qad = GPUTest(zeros([1, 1, size(out_mesh)]));
             k = 2*pi/wavelength;
             obj.TX = -k/2/distance*(Mesh.X - permute(out_mesh.X, [3 4 1 2])).^2;
             obj.TY = -k/2/distance*(Mesh.Y - permute(out_mesh.Y, [3 4 1 2])).^2;
@@ -24,16 +24,16 @@ classdef SQMDOE < DOE
                 obj.optimizer = [];
                 obj.mask = 0;
             else
-                obj.optimizer = optimizer_fabric.generate(obj.data);
+                obj.optimizer = optimizer_fabric.generate(obj.Qad);
                 obj.mask = 1;
             end
         end
         
         function obj = set_data(obj, data)
-            if ~isequal(size(data), size(obj.data))
+            if ~isequal(size(data), size(obj.Qad))
                 error("the sizes of the arrays do not match");
             end
-            obj.data = data;
+            obj.Qad = data;
         end
 
         function obj = set_mask(obj, mask)
@@ -49,8 +49,7 @@ classdef SQMDOE < DOE
             gradient = sum(gradient.*(obj.iy == permute(1:size(obj.out_mesh.Y,2), [1 4 3 2])), 2);
             gradient = permute(gradient, [1 2 5 4 3]);
             gradient = sum(gradient.*(obj.ix == permute(1:size(obj.out_mesh.X,1), [1 3 2 4])), 1);
-            gradient = obj.type.get_gradient(gradient, 1, obj.data);
-            gradient = squeeze(gradient);
+            gradient = -squeeze(imag(gradient));
         end
 
         function is = is_trainable(obj)
@@ -58,18 +57,18 @@ classdef SQMDOE < DOE
         end
 
         function field = get_transmission_function(obj)
-            field = obj.type.get_transmission_function(obj.get_surface());
+            field = exp(1i*obj.get_surface());
         end
 
         function field = get_surface(obj)
-            [field, obj.ix] = max(obj.data + obj.TX, [], 3);
+            [field, obj.ix] = max(obj.Qad + obj.TX, [], 3);
             [field, obj.iy] = max(field + obj.TY,    [], 4);
         end
 
         function make_gradient_step(obj, gradient, speed)
             if obj.is_trainable()
                 gradient = permute(gradient, [3 4 1 2]);
-                obj.data = obj.data - speed * obj.optimizer.optimize(gradient);
+                obj.Qad = obj.Qad - speed * obj.optimizer.optimize(gradient);
             end
         end
 
