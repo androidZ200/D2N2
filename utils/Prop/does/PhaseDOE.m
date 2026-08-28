@@ -29,8 +29,8 @@ classdef PhaseDOE < TypeDOE
                 sz = obj.get_size(obj.phi);
             end
         end
-        function gradient = get_gradient(obj, error)
-            gradient = real(1i*error.*obj.get_transmission_function());
+        function gradient = get_gradient(~, error, tf)
+            gradient = real(1i*error.*tf);
         end
         function make_gradient_step(obj, step)
             obj.phi = obj.phi + step;

@@ -4,7 +4,7 @@ classdef (Abstract) TypeDOE < handle
         field = get_transmission_function();
         set_data(inp_data);
         size(N);
-        gradient = get_gradient(error);
+        gradient = get_gradient(error, tf);
         make_gradient_step(step);
         imagesc(X, Y);
     end

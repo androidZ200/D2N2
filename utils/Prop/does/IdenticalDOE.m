@@ -29,7 +29,7 @@ classdef IdenticalDOE < TypeDOE
                 sz = obj.get_size(obj.data);
             end
         end
-        function gradient = get_gradient(~, error)
+        function gradient = get_gradient(~, error, ~)
             gradient = conj(error);
         end
         function make_gradient_step(obj, step)

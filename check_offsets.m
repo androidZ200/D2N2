@@ -1,26 +1,25 @@
 % check result with offsets one DOE
 
-if ~exist('max_offsets', 'var'); max_offsets = 2; end
-if ~exist('num_doe', 'var'); num_doe = 1; end
+if ~exist('max_offsets', 'var'); error('max_offsets is not exist'); end
+if ~exist('test_doe', 'var') || ~isa(test_doe, 'Inaccr_shift'); error('test_doe is not exist'); end
 
 off_err_table = zeros(max_offsets*2+1);
 off_int_table = zeros(max_offsets*2+1);
 
-save_doe = DOES;
+test_doe.enable();
 for iter1 = -max_offsets:max_offsets
     for iter2 = -max_offsets:max_offsets
         ndisp(['offsets = (' num2str(iter2) ', ' num2str(iter1) ');']);
-        DOES{num_doe} = circshift(save_doe{num_doe}, [iter1 iter2]);
+        test_doe.set_fixed_shift([iter1, iter2]);
         % max_batch = 20;
         check_result;
         off_err_table(iter1+max_offsets+1,iter2+max_offsets+1) = accuracy;
         off_int_table(iter1+max_offsets+1,iter2+max_offsets+1) = min_contrast;
     end
 end
-DOES = save_doe;
-check_result;
+test_doe.clear_fixed_shift();
 
-clearvars max_offsets num_doe iter1 iter2 save_doe;
+clearvars max_offsets test_doe iter1 iter2;
 return;
 
 %% error offsets

@@ -2,6 +2,7 @@ classdef (Abstract) DOE < Prop
     properties (SetAccess=protected)
         mesh Mesh;
         prev_node;
+        Errors;
     end
     properties (Access=protected)
         Input_field;
@@ -27,7 +28,7 @@ classdef (Abstract) DOE < Prop
         function W = get_field(obj, input)
             field = obj.prev_node.get_field(input);
             if obj.is_trainable(); obj.Input_field = field; end
-            if isempty(obj.TF); obj.TF = obj.get_transmission_function(); end
+            if isempty(obj.TF); obj.TF = obj.apply_error(obj.get_transmission_function()); end
             W = field.*obj.TF;
         end
 
@@ -66,10 +67,27 @@ classdef (Abstract) DOE < Prop
             end
         end
 
+        function set_inaccuracy(obj, inaccuracy)
+            mustBeA(inaccuracy, "Inaccuracy");
+            obj.Errors{end+1} = inaccuracy;
+        end
+
+        function clear_inaccuracy(obj, index)
+            if nargin < 2
+                obj.Errors = [];
+            elseif index > 0 && index <= length(obj.Errors)
+                if index < length(obj.Errors)
+                    obj.Errors(index:end-1) = obj.Errors(index+1:end);
+                end
+                obj.Errors(end) = [];
+            end
+        end
+
         function clear(obj)
             obj.Input_field = [];
             obj.Gradient = [];
             obj.TF = [];
+            for iter=1:length(obj.Errors); obj.Errors{iter}.clear(); end
             obj.prev_node.clear();
         end
         
@@ -82,8 +100,22 @@ classdef (Abstract) DOE < Prop
         end
 
         function gradient_step(obj, speed)
-            obj.make_gradient_step(obj.Gradient, speed);
+            obj.make_gradient_step(obj.apply_error_grad(obj.Gradient), speed);
             obj.prev_node.gradient_step(speed);
+        end
+    end
+
+    methods (Access=private)
+        function TF = apply_error(obj, TF)
+            for iter=1:length(obj.Errors)
+                TF = obj.Errors{iter}.apply(TF);
+            end
+        end
+
+        function grad = apply_error_grad(obj, grad)
+            for iter=length(obj.Errors):-1:1
+                grad = obj.Errors{iter}.get_gradient(grad);
+            end
         end
     end
 end

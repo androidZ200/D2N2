@@ -56,6 +56,7 @@ dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseDOE(), "Y").set_data(-2*pi/lambda
 dc.add_next(SincPropagator(dc, f, lambda));
 
 dc = FullDOE(dc, mesh_doe, PhaseDOE(), AdamFabric()); doe = dc;
+dc.set_inaccuracy(Inaccr_shift(2));
 
 dc = CompiledMatrixPropagator(dc);
 dc.add_next(SincPropagator(dc, f, lambda));
@@ -75,6 +76,7 @@ speed = 0.3;
 slowdown = 0.9995;
 training1;
 
+doe.Errors{1}.disable();
 check_result;
 
 %% example of a quasi-coherent source

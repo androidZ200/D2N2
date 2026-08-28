@@ -32,8 +32,8 @@ classdef FullDOE < DOE
             end
         end
 
-        function gradient = get_gradient(obj, error, ~)
-            gradient = obj.type.get_gradient(error);
+        function gradient = get_gradient(obj, error, tf)
+            gradient = obj.type.get_gradient(error, tf);
         end
 
         function is = is_trainable(obj)

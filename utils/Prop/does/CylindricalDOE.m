@@ -40,8 +40,8 @@ classdef CylindricalDOE < DOE & MatrixPropagator
             end
         end
 
-        function gradient = get_gradient(obj, error, ~)
-            gradient = obj.type.get_gradient(error);
+        function gradient = get_gradient(obj, error, tf)
+            gradient = obj.type.get_gradient(error, tf);
             gradient = mean(gradient, find(size(obj.type)==1));
         end
 

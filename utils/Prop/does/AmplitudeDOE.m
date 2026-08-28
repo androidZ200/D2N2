@@ -24,8 +24,7 @@ classdef AmplitudeDOE < TypeDOE
                 sz = obj.get_size(obj.theta);
             end
         end
-        function gradient = get_gradient(obj, error)
-            tf = obj.get_transmission_function();
+        function gradient = get_gradient(~, error, tf)
             gradient = real(error.*tf.*(1 - tf));
         end
         function make_gradient_step(obj, step)
