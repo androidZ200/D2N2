@@ -10,26 +10,18 @@ classdef Inaccr_shift < Inaccuracy
             obj.max_shifts = max_shift;
         end
         
-        function new_function = apply(obj, transmission_function)
-            if obj.is_enabled
-                if isempty(obj.current_shift)
-                    if isempty(obj.fixed_shift)
-                        obj.current_shift = randi(obj.max_shifts*2+1,[1 2])-obj.max_shifts-1;
-                    else
-                        obj.current_shift = obj.fixed_shift;
-                    end
+        function new_function = apply_child(obj, transmission_function)
+            if isempty(obj.current_shift)
+                if isempty(obj.fixed_shift)
+                    obj.current_shift = randi(obj.max_shifts*2+1,[1 2])-obj.max_shifts-1;
+                else
+                    obj.current_shift = obj.fixed_shift;
                 end
-                new_function = circshift(transmission_function, obj.current_shift);
-            else
-                new_function = transmission_function;
             end
+            new_function = circshift(transmission_function, obj.current_shift);
         end
-        function new_gradient = get_gradient(obj, gradient)
-            if obj.is_enabled
-                new_gradient = circshift(gradient, -obj.current_shift);
-            else
-                new_gradient = gradient;
-            end
+        function new_gradient = get_gradient_child(obj, gradient)
+            new_gradient = circshift(gradient, -obj.current_shift);
         end
         function clear(obj)
             obj.current_shift = [];
