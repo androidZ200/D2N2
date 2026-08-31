@@ -31,9 +31,7 @@ classdef (Abstract) Error_Decoder < ErrorFunction & Predictor
         end
         function minimize(obj, speed, weight)
             if obj.need_error_field()
-                if nargin < 3
-                    weight = 1;
-                end
+                if nargin < 3; weight = 1; end
                 obj.set_error_field(weight);
                 obj.gradient_step(speed);
             end

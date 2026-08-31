@@ -17,12 +17,8 @@ dc = InputModulator(mesh_inp, @(W)normalize_field(W));
 dc = SincPropagator(dc, f, lambda);
 dc = FullDOE(dc, mesh, PhaseDOE(), opt); doe = dc;
 dc = ASMPropagator(dc, f, lambda);
-dc = GetMaskSum(dc, mesh, MASK); decoder = dc;
-dc = ScoreSpliter(dc);
-predictor = NormalizationMAX(dc);
-err1 = ErrorSCE(predictor, ClassificationTarget(dc.count_outputs(), length(unique(TrainLabel))), 20);
-err2 = ErrorPEF(dc);
-Error = ErrorSUM(err1, 0.9).add_new(err2, 0.1); % Error JSCE
+dc = GetMaskSum(dc, mesh, MASK); decoder = dc; predictor = dc;
+Error = ErrorJSCE(dc, ClassificationTarget(dc.count_outputs(), length(unique(TrainLabel))), 20, 0.1);
 
 epoch = 4;
 batch = 20;
