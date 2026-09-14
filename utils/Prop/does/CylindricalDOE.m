@@ -9,7 +9,7 @@ classdef CylindricalDOE < DOE & MatrixPropagator
     methods
         function obj = CylindricalDOE(prev, Mesh, type, dim, optimizer_fabric)
             obj = obj@DOE(prev, Mesh);
-            mustBeA(type, "TypeDOE");
+            mustBeA(type, "DataType");
             obj.type = type;
             switch dim
                 case "X"

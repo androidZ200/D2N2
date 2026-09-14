@@ -8,7 +8,7 @@ classdef FullDOE < DOE
     methods
         function obj = FullDOE(prev, Mesh, type, optimizer_fabric)
             obj = obj@DOE(prev, Mesh);
-            mustBeA(type, "TypeDOE");
+            mustBeA(type, "DataType");
             obj.type = type;
             obj.type.create(size(Mesh));
             if nargin < 4

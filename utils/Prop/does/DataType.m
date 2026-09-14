@@ -1,4 +1,4 @@
-classdef (Abstract) TypeDOE < handle
+classdef (Abstract) DataType < handle
     methods (Abstract)
         create(size);
         field = get_transmission_function();

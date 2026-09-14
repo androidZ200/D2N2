@@ -1,4 +1,4 @@
-classdef AmplitudeDOE < TypeDOE
+classdef AmplitudeType < DataType
     properties (SetAccess=private)
         theta;
     end

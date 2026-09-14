@@ -15,7 +15,7 @@ MASK = mask10_1(mesh,[1.2e-3, 0.9e-3],100e-6);
 
 dc = InputModulator(mesh_inp, @(W)normalize_field(W));
 dc = SincPropagator(dc, f, lambda);
-dc = FullDOE(dc, mesh, PhaseDOE(), opt); doe = dc;
+dc = FullDOE(dc, mesh, PhaseType, opt); doe = dc;
 dc = ASMPropagator(dc, f, lambda);
 dc = GetMaskSum(dc, mesh, MASK); decoder = dc; predictor = dc;
 Error = ErrorJSCE(dc, ClassificationTarget(dc.count_outputs(), length(unique(TrainLabel))), 20, 0.1);
@@ -47,17 +47,17 @@ dc = InputModulator(mesh_inp, @(W)normalize_field(W));
 
 dc = CompiledMatrixPropagator(dc);
 dc.add_next(SincPropagator(dc, f, lambda));
-dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseDOE(), "X").set_data(-2*pi/lambda/f/2*mesh_lens.X.^2));
-dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseDOE(), "Y").set_data(-2*pi/lambda/f/2*mesh_lens.Y.^2));
+dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseType, "X").set_data(-2*pi/lambda/f/2*mesh_lens.X.^2));
+dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseType, "Y").set_data(-2*pi/lambda/f/2*mesh_lens.Y.^2));
 dc.add_next(SincPropagator(dc, f, lambda));
 
-dc = FullDOE(dc, mesh_doe, PhaseDOE(), AdamFabric()); doe = dc;
+dc = FullDOE(dc, mesh_doe, PhaseType, AdamFabric()); doe = dc;
 dc.set_inaccuracy(Inaccr_shift(2));
 
 dc = CompiledMatrixPropagator(dc);
 dc.add_next(SincPropagator(dc, f, lambda));
-dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseDOE(), "X").set_data(-2*pi/lambda/f/2*mesh_lens.X.^2));
-dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseDOE(), "Y").set_data(-2*pi/lambda/f/2*mesh_lens.Y.^2));
+dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseType, "X").set_data(-2*pi/lambda/f/2*mesh_lens.X.^2));
+dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseType, "Y").set_data(-2*pi/lambda/f/2*mesh_lens.Y.^2));
 dc.add_next(SincPropagator(dc, f, lambda));
 
 dc = GetMaskSum(dc, mesh_doe, MASK); decoder = dc;
@@ -98,7 +98,7 @@ dc = GetFullIntensity(dc, mesh_inp);
 
 dc = InputModulator(mesh_inp, @(W)dc.get_field(W).*repelem(W,scale,scale));
 dc = SincPropagator(dc, f, lambda);
-dc = FullDOE(dc, mesh, PhaseDOE(), AdamFabric()); doe = dc;
+dc = FullDOE(dc, mesh, PhaseType, AdamFabric()); doe = dc;
 dc = SincPropagator(dc, f, lambda);
 dc = GetMaskSum(dc, mesh, MASK); decoder = dc;
 predictor = NormalizationSUM(dc);
@@ -140,11 +140,11 @@ Target = normalize_field(Target).^2;
 
 dc = InputModulator(mesh);
 dc = ASMPropagator(dc, f, lambda);
-dc = FullDOE(dc, mesh, PhaseDOE(), AdamFabric());
+dc = FullDOE(dc, mesh, PhaseType, AdamFabric());
 dc = ASMPropagator(dc, f, lambda);
-dc = FullDOE(dc, mesh, PhaseDOE(), AdamFabric());
+dc = FullDOE(dc, mesh, PhaseType, AdamFabric());
 dc = ASMPropagator(dc, f, lambda);
-dc = FullDOE(dc, mesh, PhaseDOE(), AdamFabric());
+dc = FullDOE(dc, mesh, PhaseType, AdamFabric());
 dc = ASMPropagator(dc, f, lambda);
 dc = GetFullIntensity(dc, mesh);
 Error = ErrorMSE(dc, GenerationTarget(Target));
@@ -178,7 +178,7 @@ Target = Target - min(Target);
 Target = Target/sum(Target);
 
 dc = InputModulator(mesh_in);
-dc = FullDOE(dc, mesh_in, PhaseDOE(), AdamFabric());
+dc = FullDOE(dc, mesh_in, PhaseType, AdamFabric());
 dc = SincPropagator(dc, f, lambda);
 dc = GetFullIntensity(dc, mesh_out);
 Error = ErrorMSE(dc, GenerationTarget(Target));
