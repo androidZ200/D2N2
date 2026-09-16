@@ -44,6 +44,31 @@ classdef SQMDOE < DOE
             end
         end
 
+        function field = get_transmission_function(obj)
+            field = exp(1i*obj.get_surface());
+        end
+
+        function field = get_surface(obj)
+            [field, obj.ix] = max(obj.Qad + obj.TX, [], 3);
+            [field, obj.iy] = max(field + obj.TY,    [], 4);
+        end
+
+        function imag = imagesc(obj)
+            im = obj.type.imagesc(obj.mesh.X, obj.mesh.Y, angle(obj.get_transmission_function()));
+            if nargout > 0
+                imag = im;
+            end
+        end
+    end
+    
+    methods (Access=protected)
+        function make_gradient_step(obj, gradient, speed)
+            if obj.is_trainable()
+                gradient = permute(gradient, [3 4 1 2]);
+                obj.Qad = obj.Qad - speed * obj.optimizer.optimize(gradient);
+            end
+        end
+
         function gradient = get_gradient(obj, error, trans_func)
             gradient = error.*obj.mask.*trans_func;
             gradient = sum(gradient.*(obj.iy == permute(1:size(obj.out_mesh.Y,2), [1 4 3 2])), 2);
@@ -54,29 +79,6 @@ classdef SQMDOE < DOE
 
         function is = is_trainable(obj)
             is = sum(obj.mask, "all") > 0;
-        end
-
-        function field = get_transmission_function(obj)
-            field = exp(1i*obj.get_surface());
-        end
-
-        function field = get_surface(obj)
-            [field, obj.ix] = max(obj.Qad + obj.TX, [], 3);
-            [field, obj.iy] = max(field + obj.TY,    [], 4);
-        end
-
-        function make_gradient_step(obj, gradient, speed)
-            if obj.is_trainable()
-                gradient = permute(gradient, [3 4 1 2]);
-                obj.Qad = obj.Qad - speed * obj.optimizer.optimize(gradient);
-            end
-        end
-
-        function imag = imagesc(obj)
-            im = obj.type.imagesc(obj.mesh.X, obj.mesh.Y, angle(obj.get_transmission_function()));
-            if nargout > 0
-                imag = im;
-            end
         end
     end
 end

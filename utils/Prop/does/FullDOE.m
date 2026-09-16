@@ -32,6 +32,19 @@ classdef FullDOE < DOE
             end
         end
 
+        function field = get_transmission_function(obj)
+            field = obj.type.get_transmission_function();
+        end
+
+        function imag = imagesc(obj)
+            im = obj.type.imagesc(obj.mesh.X, obj.mesh.Y);
+            if nargout > 0
+                imag = im;
+            end
+        end
+    end
+    
+    methods (Access=protected)
         function gradient = get_gradient(obj, error, tf)
             gradient = obj.type.get_gradient(error, tf);
         end
@@ -40,20 +53,9 @@ classdef FullDOE < DOE
             is = sum(obj.mask, "all") > 0;
         end
 
-        function field = get_transmission_function(obj)
-            field = obj.type.get_transmission_function();
-        end
-
         function make_gradient_step(obj, gradient, speed)
             if obj.is_trainable()
                 obj.type.make_gradient_step(-speed*obj.optimizer.optimize(gradient).*obj.mask)
-            end
-        end
-
-        function imag = imagesc(obj)
-            im = obj.type.imagesc(obj.mesh.X, obj.mesh.Y);
-            if nargout > 0
-                imag = im;
             end
         end
     end

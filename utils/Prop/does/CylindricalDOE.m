@@ -40,24 +40,10 @@ classdef CylindricalDOE < DOE & MatrixPropagator
             end
         end
 
-        function gradient = get_gradient(obj, error, tf)
-            gradient = obj.type.get_gradient(error, tf);
-            gradient = mean(gradient, find(size(obj.type)==1));
-        end
-
-        function is = is_trainable(obj)
-            is = sum(obj.mask, "all") > 0;
-        end
-
         function field = get_transmission_function(obj)
             field = obj.type.get_transmission_function();
         end
 
-        function make_gradient_step(obj, gradient, speed)
-            if obj.is_trainable()
-                obj.type.make_gradient_step(-speed*obj.optimizer.optimize(gradient).*obj.mask)
-            end
-        end
 
         function M = get_left(obj)
             if size(obj.type,1) == 1
@@ -82,6 +68,23 @@ classdef CylindricalDOE < DOE & MatrixPropagator
             end
             if nargout > 0
                 imag = im;
+            end
+        end
+    end
+    
+    methods(Access=protected)
+        function gradient = get_gradient(obj, error, tf)
+            gradient = obj.type.get_gradient(error, tf);
+            gradient = mean(gradient, find(size(obj.type)==1));
+        end
+
+        function is = is_trainable(obj)
+            is = sum(obj.mask, "all") > 0;
+        end
+
+        function make_gradient_step(obj, gradient, speed)
+            if obj.is_trainable()
+                obj.type.make_gradient_step(-speed*obj.optimizer.optimize(gradient).*obj.mask)
             end
         end
     end

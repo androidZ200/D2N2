@@ -12,6 +12,9 @@ classdef (Abstract) DOE < Prop
     
     methods (Abstract)
         get_transmission_function();
+    end
+
+    methods (Abstract, Access=protected)
         is_trainable();
         get_gradient(error, trans_func);
         make_gradient_step(gradient, speed);
