@@ -1,4 +1,5 @@
-
+if ~exist('Test', 'var'); error('Test database has not loaded'); end
+if ~exist('TestLabel', 'var'); error('TestLabel has not loaded'); end
 if ~exist('decoder', 'var') || ~isa(decoder, "Decoder"); error('decoder is not exist'); end
 
 TestScores = zeros(decoder.count_outputs(), size(Test,3), 'single'); % scores
