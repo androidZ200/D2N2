@@ -1,7 +1,7 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/androidZ200/D2N2/blob/dev/logo/D2N2 Logo 2 Dark.png" />
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/androidZ200/D2N2/blob/dev/logo/D2N2 Logo 2 Light.png" />
-  <img src="https://github.com/androidZ200/D2N2/blob/dev/logo/D2N2 Logo 2 Light.png" alt="D2N2 logo" />
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/androidZ200/D2N2/blob/dev/logo/D2N2%20Logo%202%20Dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/androidZ200/D2N2/blob/dev/logo/D2N2%20Logo%202%20Light.png">
+  <img src="https://github.com/androidZ200/D2N2/blob/dev/logo/D2N2 Logo 2 Light.png" alt="Diffractive Deep Neural Network (D2N2)">
 </picture>
 
 ---
