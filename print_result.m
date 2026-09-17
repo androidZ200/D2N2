@@ -2,7 +2,7 @@
 if ~exist('Size', 'var'); Size = 10; end
 if ~exist('delay', 'var'); delay = 3; end
 if ~exist('decoder', 'var'); error('decoder has not created'); end
-mustBe(decoder, 'Opt_Input'); mustBe(decoder, 'Decoder');
+mustBeA(decoder, 'Opt_Input'); mustBeA(decoder, 'Decoder');
 
 % colormap in shades of Samara university
 ssau = [linspace_l(1,  32/255, 50), linspace( 32/255, 0, 100); ...
