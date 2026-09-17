@@ -3,6 +3,7 @@
 *.fig
 *.bmp
 *.png
+*.svg
 *.jpg
 *.jpeg
 
@@ -10,6 +11,8 @@ data/*
 !./_Fresnel_data_.mat
 !datasets/**
 datasets/catvsdog/CvD.mat
+!logo/*.svg
+!logo/*.png
 
 script[0-9]*.m
 !script*[^0-9]*.m
