@@ -10,9 +10,22 @@ classdef SincPropagator < FreePropagator & MatrixPropagator
     methods
         function obj = SincPropagator(prev, distance, wavelength)
             obj = obj@FreePropagator(prev);
-            obj.distance = distance;
-            obj.wavelength = wavelength;
-            obj.mesh_in = prev.output_mesh();
+            if isa(distance, 'SincPropagator')
+                if isequal(distance.mesh_in, prev.output_mesh())
+                    obj.distance = distance.distance;
+                    obj.wavelength = distance.wavelength;
+                    obj.mesh_in = distance.mesh_in;
+                    obj.mesh_out = distance.mesh_out;
+                    obj.Mat_left = distance.Mat_left;
+                    obj.Mat_right = distance.Mat_right;
+                else
+                    error("The Meshes dont match");
+                end
+            else
+                obj.distance = distance;
+                obj.wavelength = wavelength;
+                obj.mesh_in = prev.output_mesh();
+            end
         end
 
         function init(obj, mesh)
@@ -20,6 +33,7 @@ classdef SincPropagator < FreePropagator & MatrixPropagator
                 obj.mesh_out = mesh;
                 if isempty(obj.mesh_in)
                     obj.mesh_in = obj.mesh_out;
+                    obj.prev_node.set_output_mesh(obj.mesh_in);
                 end
     
                 if ~isempty(obj.mesh_in.X) && ~isempty(obj.mesh_out.X)

@@ -1,4 +1,4 @@
-classdef (Abstract) MatrixPropagator < handle
+classdef (Abstract) MatrixPropagator < Prop
     methods (Abstract)
         get_left();
         get_right();

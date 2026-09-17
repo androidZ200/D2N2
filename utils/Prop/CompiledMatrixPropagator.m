@@ -1,4 +1,4 @@
-classdef CompiledMatrixPropagator < Prop & MatrixPropagator
+classdef CompiledMatrixPropagator < MatrixPropagator
     properties(SetAccess=private)
         Mat_left = 1;
         Mat_right = 1;
@@ -14,14 +14,23 @@ classdef CompiledMatrixPropagator < Prop & MatrixPropagator
     end
 
     methods
-        function obj = CompiledMatrixPropagator(prev)
+        function obj = CompiledMatrixPropagator(prev, copy)
             mustBeA(prev,"Encoder");
             obj.prev_node = prev;
             obj.mesh_in = prev.output_mesh();
-            obj.mesh_out = obj.mesh_in;
-
-            obj.Mat_left = GPUTest(eye(size(obj.mesh_in,1)));
-            obj.Mat_right = GPUTest(eye(size(obj.mesh_in,2)));
+            if nargin > 1
+                mustBeA(copy, "MatrixPropagator");
+                if ~isequal(copy.input_mesh(), obj.mesh_in)
+                    error("The Meshes dont match");
+                end
+                obj.Mat_left = copy.get_left();
+                obj.Mat_right = copy.get_right();
+                obj.mesh_out = copy.output_mesh();
+            else
+                obj.Mat_left = GPUTest(eye(size(obj.mesh_in,1)));
+                obj.Mat_right = GPUTest(eye(size(obj.mesh_in,2)));
+                obj.mesh_out = obj.mesh_in;
+            end
         end
         
         function obj = add_next(obj, node)
