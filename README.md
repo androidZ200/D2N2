@@ -174,7 +174,7 @@ dc = InputModulator(mesh_inp, @(W)exp(-(mesh_inp.X.^2 + mesh_inp.Y.^2)/2/sig^2))
 
 ##### 3.2.2.1. `ASMPropagator` - Angular Spectrum Method
 **Назначение:** Быстрое распространение волны через Фурье-преобразование в свободном пространстве.
-Наследуется от класса `FreePropagator`.
+Наследуется от класса `FFTLikePropagator`.
 
 **Параметры:**
 - `prev` - предыдущий слой.
