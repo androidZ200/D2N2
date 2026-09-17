@@ -807,6 +807,16 @@ check_offsets;
 - `delay` - задержка между показом изображений (по умолчанию = 3 с).
 - `decoder` - декодер, который является `Opt_Input` и `Decoder`, для показа изображений и получения оценок.
 
+Примеры вывода:
+
+<img width="2250" height="600" alt="out1" src="https://github.com/user-attachments/assets/069375cf-8614-40fc-8059-f904acd97d45" />
+
+<img width="2250" height="600" alt="out2" src="https://github.com/user-attachments/assets/2112094b-3456-4d91-8d4a-ccf98a796749" />
+
+<img width="2250" height="600" alt="out3" src="https://github.com/user-attachments/assets/ec5d61dd-46d0-4e2a-8147-25d1d4d1b319" />
+
+Здесь слева показано исходное изображение. По центру распределение интенсивности в выходной плоскости с обозначением детектирующих регионов (оренжевым отмечается тот регион который является целевым для данного класса изображений). Справа представлен график распределения оценок по регионам.
+
 ---
 
 
@@ -844,6 +854,15 @@ training1;            % запуск обучения
 % проводим тестирование
 check_result;
 ```
+После проведения обучения и тестирования данной системы получаем следующие результаты:
+
+<img width="420" height="315" alt="Таблица общей точности" src="https://github.com/user-attachments/assets/0b57d1e3-d720-4dde-809b-738cf6291435" />
+<img width="420" height="315" alt="Таблица контраста" src="https://github.com/user-attachments/assets/17eb72fe-e7ab-4620-bc39-00116801488f" />
+
+Фазовая функция обученного ДОЭ будет иметь следующий вид:
+
+<img width="420" height="315" alt="phase_func" src="https://github.com/user-attachments/assets/4b269c0a-b6f1-4df8-896a-2d766018ea3c" />
+
 
 ---
 ## Лицензия и использование
