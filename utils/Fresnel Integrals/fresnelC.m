@@ -1,3 +1,6 @@
+% This file is part of the code originally written by John D'Errico (c) 2010.
+% Licensed under the BSD 2-Clause License. See license.txt in this directory.
+
 function FCint = fresnelC(X,fresnelType)
 % fresnelC - Fresnel cosine integrals, C(X), C1(X), or C2(X)
 % usage: FCint = fresnelC(X,fresnelType)

@@ -1,3 +1,6 @@
+% This file is part of the code originally written by John D'Errico (c) 2010.
+% Licensed under the BSD 2-Clause License. See license.txt in this directory.
+
 function FSint = fresnelS(X,fresnelType)
 % fresnelS - Fresnel sine integrals, S(X), S1(X), or S2(X)
 % usage: FSint = fresnelS(X,fresnelType)
