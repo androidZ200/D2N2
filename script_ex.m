@@ -2,10 +2,11 @@ addpath(genpath(pwd));
 return;
 %% standart gradient training
 
-clear variables;
+clear all;
 
-mnist_digits;
 global is_gpu; is_gpu = true;
+global is_single; is_single = true;
+mnist_digits;
 lambda = 632.8e-9;
 f = 0.01;
 mesh = Mesh(4e-6, 512);
@@ -33,8 +34,9 @@ check_result;
 
 clear variables;
 
-mnist_digits;
 global is_gpu; is_gpu = true;
+global is_single; is_single = true;
+mnist_digits;
 f = 0.25;
 lambda = 532e-9;
 
@@ -80,6 +82,7 @@ check_result;
 clear variables;
 
 global is_gpu; is_gpu = true;
+global is_single; is_single = true;
 lambda = 532e-9;
 f = 0.01;
 f_inp = 0.5;
@@ -116,8 +119,9 @@ check_result;
 %% example image generation
 
 clear variables;
-global is_gpu; is_gpu = true;
 
+global is_gpu; is_gpu = true;
+global is_single; is_single = true;
 f = 0.15;
 lambda = 532e-9; k = 2*pi/lambda;
 mesh = Mesh(18e-6, 512);
@@ -165,6 +169,7 @@ end
 
 clear variables;
 global is_gpu; is_gpu = true;
+global is_single; is_single = true;
 lambda = 532e-9;
 f = 0.2;
 

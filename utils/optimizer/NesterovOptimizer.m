@@ -9,7 +9,7 @@ classdef NesterovOptimizer < Optimizer
             if nargin > 1
                 obj.viscosity = viscosity;
             end
-            obj.state = GPUTest(zeros(size(Mesh), 'single'));
+            obj.state = GPUTest(zeros(size(Mesh)));
         end
 
         function gradient = optimize(obj,gradient)

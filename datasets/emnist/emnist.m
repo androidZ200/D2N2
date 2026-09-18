@@ -1,5 +1,5 @@
 
 load('datasets/emnist/EMNIST.mat');
 
-TrainLabel = single(TrainLabel);
-TestLabel = single(TestLabel);
+TrainLabel = GPUTest(TrainLabel);
+TestLabel = GPUTest(TestLabel);

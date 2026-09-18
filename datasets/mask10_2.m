@@ -12,6 +12,6 @@ function [Mask, coords] = mask10_2(Mesh, Full_rect, Mask_size)
                         -aa  hh; 0  hh; aa  hh              ];
     coords = permute(coords, [3 2 1]);
     
-    Mask = single((abs(Mesh.X - coords(1,2,:)) < Mask_size(2)/2).*...
+    Mask = GPUTest((abs(Mesh.X - coords(1,2,:)) < Mask_size(2)/2).*...
                   (abs(Mesh.Y - coords(1,1,:)) < Mask_size(1)/2));
 end

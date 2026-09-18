@@ -7,5 +7,14 @@ function Array = GPUTest(Array)
     else
         Array = gather(Array);
     end
+
+    global is_single;
+    if isempty(is_single); is_single = false; end
+
+    if is_single
+        Array = single(Array);
+    else
+        Array = double(Array);
+    end
 end
 

@@ -1,7 +1,7 @@
 
 load('datasets/mnist/MNIST.mat');
 
-Train = single(Train);
+Train = GPUTest(Train);
 TrainLabel = reshape(TrainLabel,1,[]);
-Test = single(Test);
+Test = GPUTest(Test);
 TestLabel = reshape(TestLabel,1,[]);

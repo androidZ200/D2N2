@@ -11,7 +11,7 @@ classdef RMSpropOptimizer < Optimizer
                 obj.epsilon = epsilon;
                 obj.accumulater = accumulater;
             end
-            obj.state = GPUTest(zeros(size(Mesh), 'single'));
+            obj.state = GPUTest(zeros(size(Mesh)));
         end
 
         function gradient = optimize(obj,gradient)

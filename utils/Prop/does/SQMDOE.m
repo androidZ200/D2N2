@@ -33,7 +33,7 @@ classdef SQMDOE < DOE
             if ~isequal(size(data), size(obj.Qad))
                 error("the sizes of the arrays do not match");
             end
-            obj.Qad = data;
+            obj.Qad = GPUTest(data);
         end
 
         function obj = set_mask(obj, mask)

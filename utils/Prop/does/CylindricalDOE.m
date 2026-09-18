@@ -47,7 +47,7 @@ classdef CylindricalDOE < DOE & MatrixPropagator
 
         function M = get_left(obj)
             if size(obj.type,1) == 1
-                M = eye(obj.size(1));
+                M = GPUTest(eye(obj.size(1)));
             else
                 M = diag(obj.type.get_transmission_function());
             end
@@ -56,7 +56,7 @@ classdef CylindricalDOE < DOE & MatrixPropagator
             if size(obj.type,1) == 1
                 M = diag(obj.type.get_transmission_function());
             else
-                M = eye(obj.size(2));
+                M = GPUTest(eye(obj.size(2)));
             end
         end
 

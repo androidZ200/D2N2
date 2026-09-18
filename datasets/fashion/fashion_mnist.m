@@ -2,6 +2,6 @@
 load('datasets/fashion/FashionMNIST.mat');
 
 % rename digits label
-TrainLabel = single(TrainLabel + 1);
-TestLabel = single(TestLabel + 1);
+TrainLabel = GPUTest(TrainLabel + 1);
+TestLabel = GPUTest(TestLabel + 1);
 

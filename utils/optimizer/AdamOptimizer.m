@@ -15,8 +15,8 @@ classdef AdamOptimizer < Optimizer
                 obj.viscosity = viscosity;
                 obj.accumulater = accumulater;
             end
-            obj.state_v = GPUTest(zeros(size(Mesh), 'single'));
-            obj.state_a = GPUTest(zeros(size(Mesh), 'single'));
+            obj.state_v = GPUTest(zeros(size(Mesh)));
+            obj.state_a = GPUTest(zeros(size(Mesh)));
         end
         function gradient = optimize(obj,gradient)
             obj.state_v = obj.viscosity*obj.state_v + (1 - obj.viscosity)*gradient;

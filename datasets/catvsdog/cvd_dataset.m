@@ -1,26 +1,26 @@
 
-if disp_info >= 2; ndisp('loading cat vs dog dataset'); end
+ndisp('loading cat vs dog dataset');
 load('datasets/catvsdog/CvD.mat');
 
-if ~exist('Width_image', 'var'); Width_image = N(1,1); end
-if ~exist('Height_image', 'var'); Height_image = N(1,2); end
+if ~exist('Width_image', 'var'); error('Width_image not exist'); end
+if ~exist('Height_image', 'var'); error('Height_image not exist'); end
 
 % Labels numbers
 Labels = {'cat', 'dog'};
 ln = length(Labels);
 
 % Standart size images
-if disp_info >= 2; rdisp('resizing cat dataset'); end
+rdisp('resizing cat dataset');
 for iter = 1:length(cat)
     cat{iter} = resize_img(cat{iter}, Width_image, Height_image);
 end
-if disp_info >= 2; rdisp('resizing dog dataset'); end
+rdisp('resizing dog dataset');
 for iter = 1:length(dog)
     dog{iter} = resize_img(dog{iter}, Width_image, Height_image);
 end
 
 % Create test set
-if disp_info >= 2; rdisp('spliting dataset'); end
+rdisp('spliting dataset');
 Testsize = 2000;
 catid = randi(length(cat),1,Testsize);
 dogid = randi(length(dog),1,Testsize);
@@ -37,7 +37,7 @@ TrainLabel = [repmat(1, [1 length(cat)]), repmat(2, [1 length(dog)])];
 
 Train = cell2mat(reshape(Train,1,1,[]));
 
-if disp_info >= 2; rdisp('load cat vs dog finished'); end
+rdisp('load cat vs dog finished');
 
 clearvars Testsize catid dogid cat dog imag scx scy sc iter;
 
@@ -51,7 +51,7 @@ function img = resize_img(img, Width_image, Height_image)
     if sc > 1
         imag = imresize(imag, round([size(img,1)/sc, size(img,2)/sc]));
     end
-    img = zeros(Width_image, Height_image, 'single');
+    img = GPUTest(zeros(Width_image, Height_image));
      img(floor(end/2-size(imag,1)/2)+1:floor(end/2+size(imag,1)/2),...
               floor(end/2-size(imag,2)/2)+1:floor(end/2+size(imag,2)/2)) = imag;
 end

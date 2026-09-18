@@ -11,8 +11,8 @@ classdef Mesh < handle
 
             PN = pixel.*N/2;
 
-            if N(1) > 1; obj.X = GPUTest(single(linspace_m(-PN(1), PN(1), N(1)).')); end
-            if N(2) > 1; obj.Y = GPUTest(single(linspace_m(-PN(2), PN(2), N(2)))); end
+            if N(1) > 1; obj.X = GPUTest(linspace_m(-PN(1), PN(1), N(1)).'); end
+            if N(2) > 1; obj.Y = GPUTest(linspace_m(-PN(2), PN(2), N(2))); end
         end
 
         function obj = offset(obj, off)
