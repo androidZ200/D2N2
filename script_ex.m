@@ -48,8 +48,8 @@ dc = InputModulator(mesh_inp, @(W)normalize_field(W));
 
 dc = CompiledMatrixPropagator(dc);
 dc.add_next(SincPropagator(dc, f, lambda));
-dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseType, "X").set_data(-2*pi/lambda/f/2*mesh_lens.X.^2));
-dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseType, "Y").set_data(-2*pi/lambda/f/2*mesh_lens.Y.^2));
+dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseType, "X").set_tf(exp(-2i*pi/lambda/f/2*mesh_lens.X.^2)));
+dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseType, "Y").set_tf(exp(-2i*pi/lambda/f/2*mesh_lens.Y.^2)));
 dc.add_next(SincPropagator(dc, f, lambda));
 
 dc = FullDOE(dc, mesh_doe, PhaseType, AdamFabric()); doe = dc;
@@ -57,8 +57,8 @@ dc.set_inaccuracy(Inaccr_shift(2));
 
 dc = CompiledMatrixPropagator(dc);
 dc.add_next(SincPropagator(dc, f, lambda));
-dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseType, "X").set_data(-2*pi/lambda/f/2*mesh_lens.X.^2));
-dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseType, "Y").set_data(-2*pi/lambda/f/2*mesh_lens.Y.^2));
+dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseType, "X").set_tf(exp(-2i*pi/lambda/f/2*mesh_lens.X.^2)));
+dc.add_next(CylindricalDOE(dc, mesh_lens, PhaseType, "Y").set_tf(exp(-2i*pi/lambda/f/2*mesh_lens.Y.^2)));
 dc.add_next(SincPropagator(dc, f, lambda));
 
 dc = GetMaskSum(dc, mesh_doe, MASK); decoder = dc;

@@ -48,6 +48,11 @@ classdef SQMDOE < DOE
             field = exp(1i*obj.get_surface());
         end
 
+        function reset(obj)
+            if ~isempty(obj.optimizer); obj.optimizer.reset(); end
+            obj.Qad = GPUTest(zeros(size(obj.Qad)));
+        end
+
         function field = get_surface(obj)
             [field, obj.ix] = max(obj.Qad + obj.TX, [], 3);
             [field, obj.iy] = max(field + obj.TY,    [], 4);

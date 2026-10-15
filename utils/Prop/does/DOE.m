@@ -12,6 +12,7 @@ classdef (Abstract) DOE < Prop
     
     methods (Abstract)
         get_transmission_function();
+        reset();
     end
 
     methods (Abstract, Access=protected)

@@ -2,7 +2,7 @@ classdef (Abstract) DataType < handle
     methods (Abstract)
         create(size);
         field = get_transmission_function();
-        set_data(inp_data);
+        set_transmision_function(inp_data);
         size(N);
         gradient = get_gradient(error, tf);
         make_gradient_step(step);

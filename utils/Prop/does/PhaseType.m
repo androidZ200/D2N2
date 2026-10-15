@@ -4,23 +4,30 @@ classdef PhaseType < DataType
                 linspace_l(40, 146, 40), linspace_l(146,  255, 40), linspace_l(255,  88, 40), linspace_l( 88, 40, 40);...
                 linspace_l(40, 201, 40), linspace_l(201,  255, 40), linspace_l(255,  32, 40), linspace_l( 32, 40, 40)]'/255;
     end
-    properties (SetAccess=private)
+    properties
         phi;
     end
 
     methods
+        function phi = get.phi(obj)
+            phi = obj.phi;
+        end
+        function set.phi(obj, val)
+            mustBeReal(val);
+            obj.phi = val;
+        end
+
         function create(obj, size)
             obj.phi = GPUTest(zeros(size));
         end
         function field = get_transmission_function(obj)
             field = exp(1i*obj.phi);
         end
-        function set_data(obj, inp_data)
-            if isequal(size(obj.phi), size(inp_data)) || isempty(obj.phi)
-                obj.phi = real(inp_data);
-            else
-                error("the sizes of the arrays do not match");
+        function set_transmision_function(obj, inp_data)
+            if max(abs(abs(inp_data)-1),[],"all") > 1e-7
+                warning("PhaseType: The set value must be purely phase-related. The amplitude will be set to 1");
             end
+            obj.phi = angle(inp_data);
         end
         function sz = size(obj, N)
             if nargin > 1

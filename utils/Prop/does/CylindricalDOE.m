@@ -1,6 +1,5 @@
 classdef CylindricalDOE < DOE & MatrixPropagator
     properties (SetAccess=private)
-        data;
         mask;
         optimizer;
         type;
@@ -23,27 +22,41 @@ classdef CylindricalDOE < DOE & MatrixPropagator
                 obj.optimizer = [];
                 obj.mask = 0;
             else
-                obj.optimizer = optimizer_fabric.generate(obj.data);
+                obj.optimizer = optimizer_fabric.generate(obj.type);
                 obj.mask = 1;
             end
         end
 
         function obj = set_data(obj, data)
-            obj.type.set_data(data);
+            mustBeA(data, "DataType");
+            if ~isequal(size(data), size(obj.type))
+                error("CylindricalDOE: The data dimensionality must correspond to the mesh");
+            end
+            obj.type = data;
+        end
+        function obj = set_tf(obj, data)
+            if ~isequal(size(data), size(obj.type))
+                error("CylindricalDOE: The data dimensionality must correspond to the mesh");
+            end
+            obj.type.set_transmision_function(data);
         end
 
         function obj = set_mask(obj, mask)
             if isequal(size(mask), size(obj.mesh)) || size(mask) == 1
                 obj.mask = GPUTest(mask);
             else
-                error("the sizes of the arrays do not match");
+                error("CylindricalDOE: The sizes of the mask arrays do not match");
             end
         end
 
         function field = get_transmission_function(obj)
             field = obj.type.get_transmission_function();
         end
-
+        
+        function reset(obj)
+            if ~isempty(obj.optimizer); obj.optimizer.reset(); end
+            obj.type.create(size(obj.type));
+        end
 
         function M = get_left(obj)
             if size(obj.type,1) == 1
