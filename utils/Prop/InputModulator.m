@@ -13,6 +13,9 @@ classdef InputModulator < Encoder
                 obj.Func = @(W)W;
             end
         end
+        function set_Func(obj, Func)
+            obj.Func = Func;
+        end
 
         function field = get_field(obj, input)
             field = obj.Func(input);
