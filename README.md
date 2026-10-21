@@ -1,7 +1,7 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/androidZ200/D2N2/blob/dev/logo/D2N2%20Logo%202%20Dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/androidZ200/D2N2/blob/dev/logo/D2N2%20Logo%202%20Light.png">
-  <img src="https://github.com/androidZ200/D2N2/blob/dev/logo/D2N2 Logo 2 Light.png" alt="Diffractive Deep Neural Network (D2N2)">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/androidZ200/D2N2/blob/main/logo/D2N2%20Logo%202%20Dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/androidZ200/D2N2/blob/main/logo/D2N2%20Logo%202%20Light.png">
+  <img src="https://github.com/androidZ200/D2N2/blob/main/logo/D2N2 Logo 2 Light.png" alt="Diffractive Deep Neural Network (D2N2)">
 </picture>
 
 ---
@@ -949,7 +949,7 @@ plot_intensity_table(int, Labels);
 **Примечание**:
 Этот проект включает код John D'Errico (лицензия BSD 2-Clause), см. папку `utils/Fresnel Integrals/`.
 
-По всем вопросам касательно данного фреймворка (использование, баги, пожелания и замечания) пишите на почту автора: soshnikiv.d2n2@mail.ru
+По всем вопросам касательно данного фреймворка (использование, баги, пожелания и замечания) пишите на почту автора: soshnikov.d2n2@mail.ru
 
 ## Цитирование в статьях и исследованиях
 Если вы используете этот код в научных статьях, блогах или публичных материалах, я буду благодарен за ссылку на этот репозиторий и упоминание автора.
