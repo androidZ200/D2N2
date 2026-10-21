@@ -2,6 +2,7 @@
 
 if ~exist('max_offsets', 'var'); error('max_offsets is not exist'); end
 if ~exist('test_doe', 'var') || ~isa(test_doe, 'Inaccr_shift'); error('test_doe is not exist'); end
+if ~exist('batch', 'var'); batch = 1; end
 
 off_err_table = zeros(max_offsets*2+1);
 off_int_table = zeros(max_offsets*2+1);
@@ -11,10 +12,9 @@ for iter1 = -max_offsets:max_offsets
     for iter2 = -max_offsets:max_offsets
         ndisp(['offsets = (' num2str(iter2) ', ' num2str(iter1) ');']);
         test_doe.set_fixed_shift([iter1, iter2]);
-        % max_batch = 20;
-        check_result;
-        off_err_table(iter1+max_offsets+1,iter2+max_offsets+1) = accuracy;
-        off_int_table(iter1+max_offsets+1,iter2+max_offsets+1) = min_contrast;
+        [~, acc, ~, minc] = GetTest(decoder, Test, TestLabel, batch);
+        off_err_table(iter1+max_offsets+1,iter2+max_offsets+1) = acc;
+        off_int_table(iter1+max_offsets+1,iter2+max_offsets+1) = minc;
     end
 end
 test_doe.clear_fixed_shift();

@@ -28,7 +28,9 @@ speed = 0.3;
 slowdown = 0.9995;
 training1;
 
-check_result;
+[err, ~, int] = GetTest(decoder, Test, TestLabel, 40);
+plot_error_table(err, Labels);
+plot_intensity_table(int, Labels);
 
 %% 4F-system
 
@@ -73,8 +75,10 @@ speed = 0.3;
 slowdown = 0.9995;
 training1;
 
-doe.Errors{1}.disable();
-check_result;
+test_doe = doe.Errors{1};
+max_offsets = 2;
+batch = 40;
+check_offsets;
 
 %% example of a quasi-coherent source
 
@@ -112,7 +116,9 @@ speed = 0.3;
 slowdown = 0.01^(batch/epoch/size(Train,3));
 training1;
 
-check_result;
+[err, ~, int] = GetTest(decoder, Test, TestLabel, 10);
+plot_error_table(err, Labels);
+plot_intensity_table(int, Labels);
 
 %% example image generation
 
