@@ -75,10 +75,9 @@ speed = 0.3;
 slowdown = 0.9995;
 training1;
 
-test_doe = doe.Errors{1};
-max_offsets = 2;
-batch = 40;
-check_offsets;
+[err_off, int_off] = GetTestOffset(decoder, Test, TestLabel, 2, doe.Errors{1}, 40);
+plot_error_offset(err_off);
+plot_intensity_offset(int_off);
 
 %% example of a quasi-coherent source
 
