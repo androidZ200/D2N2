@@ -80,6 +80,61 @@ GetTraining(Error,Train,TrainLabel,param);
 plot_error_offset(err_off);
 plot_intensity_offset(int_off);
 
+%% example parallel system
+
+clear variables;
+
+global is_gpu; is_gpu = true;
+lambda = 532e-9;
+f = 0.01;
+mesh_inp = Mesh(10e-6, 28);
+mesh = Mesh(4e-6, 512);
+
+mnist_digits;
+MASK = mask10_1(mesh,[1.2e-3, 0.9e-3],100e-6);
+
+dc = InputModulator(mesh_inp, lambda);
+dc = SincPropagator(dc, f);
+dc = BeamSplitter(dc, mesh);
+
+dc1 = ASMPropagator(dc, f);
+dc1 = FullDOE(dc1, mesh, PhaseType, AdamFabric); doe{1} = dc1;
+dc1 = ASMPropagator(dc1, f);
+
+dc2 = ASMPropagator(dc, f);
+dc2 = FullDOE(dc2, mesh, PhaseType, AdamFabric); doe{2} = dc2;
+dc2 = ASMPropagator(dc2, f);
+
+dc = BeamCollector(dc1, 0.5).add_new(dc2, 0.5);
+dc = ASMPropagator(dc, f);
+dc = GetMaskSum(dc, mesh, MASK);
+decoder = NormalizationSUM(dc);
+Error = ErrorSCE(decoder, ClassificationTarget(size(MASK,3), length(unique(TrainLabel))), 70);
+
+param.epoch = 4;
+param.batch = 20;
+param.cycle = param.epoch*size(Train,3)/10;
+param.speed = 0.5;
+param.slowdown = 0.9995;
+param.predictor = decoder;
+GetTraining(Error,Train,TrainLabel,param);
+
+[err, ~, int] = GetTest(decoder, Test, TestLabel, 40);
+plot_error_table(err, Labels);
+plot_intensity_table(int, Labels);
+
+% create new system from old
+dc = InputModulator(mesh_inp, lambda);
+dc = SincPropagator(dc, f*2);
+dc = FullDOE(dc,mesh,ComplexType).set_tf((doe{1}.get_transmission_function() + doe{2}.get_transmission_function())/2);
+dc = ASMPropagator(dc, f*2);
+dc = GetMaskSum(dc, mesh, MASK);
+decoder = NormalizationSUM(dc);
+
+[err, ~, int] = GetTest(decoder, Test, TestLabel, 40);
+plot_error_table(err, Labels);
+plot_intensity_table(int, Labels);
+
 %% example of a quasi-coherent source
 
 clear variables;
