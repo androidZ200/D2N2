@@ -13,6 +13,10 @@ classdef (Abstract) FreePropagator < Prop
         function obj = FreePropagator(prev)
             mustBeA(prev,"Encoder");
             obj.prev_node = prev;
+            obj.wavelength = obj.prev_node.get_wavelength();
+        end
+        function lambda = get_wavelength(obj)
+            lambda = obj.wavelength;
         end
         function need = need_error_field(obj)
             need = obj.prev_node.need_error_field();

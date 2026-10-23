@@ -12,6 +12,9 @@ classdef BeamCollector < Prop
 
         function obj = add_new(obj, prev, weight)
             mustBeA(prev, "Encoder");
+            if ~isempty(obj.prev_nodes) && prev.get_wavelength() ~= obj.get_wavelength()
+                error("BeamCollector: It is impossible to combine sources with different wavelengths");
+            end
             obj.prev_nodes{end+1} = prev;
             if nargin > 2 && ~isempty(weight)
                 mustBeScalarOrEmpty(weight);
@@ -49,6 +52,9 @@ classdef BeamCollector < Prop
             for iter = 2:length(obj.prev_nodes)
                 field = field + obj.prev_nodes{iter}.get_field(input) * obj.weights(iter);
             end
+        end
+        function lambda = get_wavelength(obj)
+            lambda = obj.prev_nodes{1}.get_wavelength();
         end
         function mesh = output_mesh(obj)
             mesh = obj.mesh;

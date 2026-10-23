@@ -48,6 +48,10 @@ classdef BeamSplitter < Prop
             obj.counter = obj.counter + 1;
         end
 
+        function lambda = get_wavelength(obj)
+            lambda = obj.prev_node.get_wavelength();
+        end
+
         function need = need_error_field(obj)
             need = obj.prev_node.need_error_field();
         end

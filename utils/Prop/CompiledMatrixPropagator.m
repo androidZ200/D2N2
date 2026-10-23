@@ -47,6 +47,9 @@ classdef CompiledMatrixPropagator < MatrixPropagator
             field = obj.prev_node.get_field(input);
             field = obj.prop(obj.Mat_left, field, obj.Mat_right);
         end
+        function lambda = get_wavelength(obj)
+            lambda = obj.prev_node.get_wavelength();
+        end
         function set_error_field(obj, error)
             error = obj.prop(obj.Mat_left.', error, obj.Mat_right.');
             obj.prev_node.set_error_field(error);

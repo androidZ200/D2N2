@@ -2,12 +2,14 @@ classdef InputModulator < Encoder
     properties (SetAccess=private)
         Mesh Mesh;
         Func;
+        wavelength;
     end
 
     methods
-        function obj = InputModulator(Mesh, Func)
+        function obj = InputModulator(Mesh, wavelength, Func)
             obj.Mesh = Mesh;
-            if nargin > 1
+            obj.wavelength = wavelength;
+            if nargin > 2
                 obj.Func = Func;
             else
                 obj.Func = @(W)W;
@@ -19,6 +21,9 @@ classdef InputModulator < Encoder
 
         function field = get_field(obj, input)
             field = obj.Func(input);
+        end
+        function lambda = get_wavelength(obj)
+            lambda = obj.wavelength;
         end
         function need = need_error_field(~)
             need = false;

@@ -8,10 +8,9 @@ classdef (Abstract) FFTLikePropagator < FreePropagator
     end
 
     methods
-        function obj = FFTLikePropagator(prev, distance, wavelength)
+        function obj = FFTLikePropagator(prev, distance)
             obj = obj@FreePropagator(prev);
             obj.distance = distance;
-            obj.wavelength = wavelength;
 
             mesh = prev.output_mesh();
             if ~isempty(mesh)
