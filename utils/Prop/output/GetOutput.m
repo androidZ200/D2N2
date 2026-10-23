@@ -26,11 +26,13 @@ classdef (Abstract) GetOutput < Decoder & Opt_Input
             obj.prev_node.clear();
         end
         function field = get_field(obj, input)
-            if nargin > 1
-                field = obj.prev_node.get_field(input);
-                obj.lastW = field;
-            elseif isempty(obj.lastW)
-                error("not enourgt input arguments");
+            if isempty(obj.lastW)
+                if nargin > 1
+                    field = obj.prev_node.get_field(input);
+                    obj.lastW = field;
+                else
+                    error("not enourgt input arguments");
+                end
             end
             field = obj.lastW;
         end
