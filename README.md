@@ -101,6 +101,7 @@ Input → ... → Propagator → DOE → Propagator → ... → Output
 - `Encoder` - компоненты наследующиеся от данного класса могут формировать оптическое поле на выходе. Наследуется от класса `Back_Propogator`.
 **Методы**:
 	- `get_field(input)` - возвращает оптическое поле следующему слою.
+	- `get_wavelength()` - возвращает длину волны с которой работает система.
 	- `output_mesh()` - возвращает свою выходную сетку.
 	- `set_output_mesh(mesh)` - позволяет установить выходную сетку (используется во время инициализации системы, когда сетка определяется будущими компонентами).
 
@@ -178,6 +179,7 @@ mesh = Mesh([2e-6, 4e-6], [2048, 512]);
 
 **Параметры:**
 - `Mesh` - сетка входного слоя.
+- `wavelength` - длина волны оптического излучения (в метрах).
 - `Func` - функция преобразования входных данных (опционально, если функция не будет передана, то параметр input будет считаться тем самым входным полем).
 
 **Методы:**
@@ -212,8 +214,7 @@ dc = InputModulator(mesh_inp, @(W)exp(-(mesh_inp.X.^2 + mesh_inp.Y.^2)/2/sig^2))
 
 **Параметры:**
 - `prev` - предыдущий слой.
-- `distance` - расстояние распространения.
-- `wavelength` - длина волны.
+- `distance` - расстояние распространения (в метрах).
 Данный класс не принимает на вход параметр сетки, т.к. берет её у предыдущего слоя.
 
 **Особенности:**
@@ -227,8 +228,8 @@ dc = InputModulator(mesh_inp, @(W)exp(-(mesh_inp.X.^2 + mesh_inp.Y.^2)/2/sig^2))
 lambda = 532e-9;  % длина волны 532 нм
 f = 0.01;         % расстояние 1 см
 
-dc = InputModulator(mesh_inp, @(W)normalize_field(W));
-dc = ASMPropagator(dc, f, lambda);
+dc = InputModulator(mesh_inp, lambda, @(W)normalize_field(W));
+dc = ASMPropagator(dc, f);
 ```
 
 #### 3.2.2.2. `SincPropagator` - Sinc-интерполяционное распространение
@@ -244,7 +245,6 @@ Field_out = Left * Field_in * Right;
 **Параметры:**
 - `prev` - предыдущий слой.
 - `distance` - расстояние распространения (в метрах).
-- `wavelength` - длина волны света (в метрах).
 Данный класс не принимает на вход параметры сетки, т.к. берет её у предыдущего и следующего слоев.
 
 **Особенности:**
@@ -258,8 +258,8 @@ Field_out = Left * Field_in * Right;
 lambda = 532e-9;  % зелёный свет
 f = 0.01;         % расстояние 1 см
 
-dc = InputModulator(mesh_inp, @(W)normalize_field(W));
-dc = SincPropagator(dc, f, lambda);
+dc = InputModulator(mesh_inp, lambda, @(W)normalize_field(W));
+dc = SincPropagator(dc, f);
 
 % В случае когда есть несколько sinc пропагаторов с одинаковыми параметрами (входная и выходная сетки, расстояние, длина волны),
 % то чтобы заново не генерировать одни и те же матрицы распространения, можно их скопировать из другого sinc пропагатора
@@ -382,7 +382,7 @@ TF = a + i*b
 
 **Пример:**
 ```matlab
-dc = SincPropagator(dc, f, lambda);
+dc = SincPropagator(dc, f);
 dc = GetFullIntensity(dc, mesh);
 
 % Так же есть возможноть задать маску
@@ -630,16 +630,16 @@ W_out = L * W_in * R
 Данную оптимизацию уместно применять в 4F системах, т.к. линзы там можно представить в факторизированном виде.
 ```matlab
 % Без оптимизации
-dc = SincPropagator(dc, f, lambda);
+dc = SincPropagator(dc, f);
 dc = FullDOE(dc, mesh, PhaseType).set_data(-2*pi/lambda/f/2*(mesh.X.^2 + mesh.Y.^2));
-dc = SincPropagator(dc, f, lambda);
+dc = SincPropagator(dc, f);
 
 % С оптимизацией
 dc = CompiledMatrixPropagator(dc);
-dc.add_next(SincPropagator(dc, f, lambda));
+dc.add_next(SincPropagator(dc, f));
 dc.add_next(CylindricalDOE(dc, mesh, PhaseType, "X").set_data(-2*pi/lambda/f/2*mesh.X.^2));
 dc.add_next(CylindricalDOE(dc, mesh, PhaseType, "Y").set_data(-2*pi/lambda/f/2*mesh.Y.^2));
-dc.add_next(SincPropagator(dc, f, lambda));
+dc.add_next(SincPropagator(dc, f));
 ```
 
 ### 3.5.2. `BeamSplitter` - Делитель пучка
@@ -651,20 +651,20 @@ dc.add_next(SincPropagator(dc, f, lambda));
 **Пример:**
 ```matlab
 dc = BeamSplitter(dc, mesh);
-dc1 = ASMPropagator(dc, f1, lambda);
-dc2 = SincPropagetor(dc, f2, lambda);
+dc1 = ASMPropagator(dc, f1);
+dc2 = SincPropagetor(dc, f2);
 ```
 
 ### 3.5.3. `BeamCollector` - Объединитель пучков
 **Назначение:** объединяет оптические пучки в один с заданными весами. Работает по аналогии с `ErrorSUM`, но для оптического поля. Используя совместно с `BeamSplitter` можно создавать параллельные фрагменты оптической системы.
 Наследуется от `Prop`
 
-На вход принимает ссылку на предыдущий слой `prev` и соответствующий вес `weight`. Добавление дополнительный элементов осуществляется с помощью метода `add_new`, который принимает те же параметры.
+На вход принимает ссылку на предыдущий слой `prev` и соответствующий вес `weight`. Добавление дополнительный элементов осуществляется с помощью метода `add_new`, который принимает те же параметры. Важно чтобы у двух (или более) входов совпадали входные сетки и длина волны.
 
 **Пример:**
 ```matlab
-dc1 = ASMPropagator(dc, f1, lambda);
-dc2 = SincPropagetor(dc, f2, lambda);
+dc1 = ASMPropagator(dc, f1);
+dc2 = SincPropagetor(dc, f2);
 dc = BeamCollector(dc1, 0.5).add_new(dc2, 0.5);
 ```
 
@@ -913,10 +913,10 @@ opt = AdamFabric();                                  % оптимизатор б
 MASK = mask10_1(mesh,[1.2e-3, 0.9e-3],100e-6);       % создаем маски
 
 % теперь идет построение системы
-dc = InputModulator(mesh_inp, @(W)normalize_field(W));                                                  % входной модулятор
-dc = SincPropagator(dc, f, lambda);                                                                     % распространение по sinc на расстояние f
+dc = InputModulator(mesh_inp, lambda, @(W)normalize_field(W));                                          % входной модулятор
+dc = SincPropagator(dc, f);                                                                             % распространение по sinc на расстояние f
 dc = FullDOE(dc, mesh, PhaseType, opt); doe = dc;                                                       % фазовый ДОЭ
-dc = ASMPropagator(dc, f, lambda);                                                                      % распространение ASM на расстояние f
+dc = ASMPropagator(dc, f);                                                                              % распространение ASM на расстояние f
 dc = GetMaskSum(dc, mesh, MASK); decoder = dc;                                                          % выходной модулятор. считываем сумму в областях
 Error = ErrorJSCE(dc, ClassificationTarget(dc.count_outputs(), length(unique(TrainLabel))), 20, 0.1);   % функция ошибки JSCE
 
