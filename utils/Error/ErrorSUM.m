@@ -25,12 +25,14 @@ classdef ErrorSUM < ErrorFunction
                 error = error + obj.errors{iter}.get_error(input, index).*obj.weights(iter);
             end
         end
-        function minimize(obj, speed, weight)
+        function back_propagation(obj, weight)
             if obj.need_error_field()
-                if nargin < 3; weight = 1; end
+                if nargin < 2; weight = 1; end
                 obj.set_error_field(weight);
-                obj.gradient_step(speed);
             end
+        end
+        function minimize(obj, speed)
+            obj.gradient_step(speed);
             obj.clear();
         end
         function need = need_error_field(obj)

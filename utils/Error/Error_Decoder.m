@@ -29,12 +29,14 @@ classdef (Abstract) Error_Decoder < ErrorFunction & Predictor
             obj.last_scores = obj.decoder.get_output(input);
             error = obj.error(obj.last_scores, obj.last_target);
         end
-        function minimize(obj, speed, weight)
+        function back_propagation(obj, weight)
             if obj.need_error_field()
-                if nargin < 3; weight = 1; end
+                if nargin < 2; weight = 1; end
                 obj.set_error_field(weight);
-                obj.gradient_step(speed);
             end
+        end
+        function minimize(obj, speed)
+            obj.gradient_step(speed);
             obj.clear();
         end
         function need = need_error_field(obj)

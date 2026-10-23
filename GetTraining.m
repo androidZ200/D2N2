@@ -30,6 +30,7 @@ function GetTraining(Error, Train, TrainLabel, parameters)
             
             % direct propagation
             err = Error.get_error(Train(:,:,index), num);
+            Error.back_propagation();
             if isempty(loss)
                 loss = mean(err);
             else

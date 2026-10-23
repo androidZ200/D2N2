@@ -17,9 +17,12 @@ classdef ErrorJSCE < ErrorFunction % joint softmax cross entropy
         function error = get_error(obj, input, index)
             error = obj.Error.get_error(input, index);
         end
-        function minimize(obj, speed, weight)
-            if nargin < 3; weight = 1; end
-            obj.Error.minimize(speed, weight);
+        function back_propagation(obj, weight)
+            if nargin < 2; weight = 1; end
+            obj.set_error_field(weight);
+        end
+        function minimize(obj, speed)
+            obj.Error.minimize(speed);
         end
 
         function need = need_error_field(obj)
