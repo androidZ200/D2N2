@@ -26,15 +26,12 @@ classdef (Abstract) GetOutput < Decoder & Opt_Input
             obj.prev_node.clear();
         end
         function field = get_field(obj, input)
-            if isempty(obj.lastW)
-                if nargin > 1
-                    field = obj.prev_node.get_field(input);
-                    obj.lastW = field;
-                else
-                    error("not enourgt input arguments");
-                end
+            if nargin > 1
+                field = obj.prev_node.get_field(input);
+                obj.lastW = field;
+            else
+                error("not enourgt input arguments");
             end
-            field = obj.lastW;
         end
         function int = intensity(obj, input)
             field = obj.get_field(input);

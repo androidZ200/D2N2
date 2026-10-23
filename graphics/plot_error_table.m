@@ -19,5 +19,4 @@ function accuracy = plot_error_table(error_table, Labels)
     end
     accuracy = sum(diag(error_table))/sum(error_table,'all')*100;
     title(['accuracy = ' replace(num2str(accuracy), '.', ',') '%;']);
-    ndisp(['accuracy = ' num2str(accuracy) '%;']);
 end

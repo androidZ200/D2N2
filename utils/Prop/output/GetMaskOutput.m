@@ -16,11 +16,7 @@ classdef (Abstract) GetMaskOutput < GetOutput & Predictor
             [~,pred] = max(obj.lastScore,[],1);
         end
         function score = get_output(obj, input)
-            if isempty(obj.lastScore)
-                score = get_output@GetOutput(obj,input).*obj.Mask;
-            else
-                score = obj.lastScore;
-            end
+            score = get_output@GetOutput(obj,input).*obj.Mask;
         end
         function count = count_outputs(obj) 
             count = size(obj.Mask, 4);

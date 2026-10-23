@@ -18,15 +18,16 @@ dc = InputModulator(mesh_inp, @(W)normalize_field(W));
 dc = SincPropagator(dc, f, lambda);
 dc = FullDOE(dc, mesh, PhaseType, opt); doe = dc;
 dc = ASMPropagator(dc, f, lambda);
-dc = GetMaskSum(dc, mesh, MASK); decoder = dc; predictor = dc;
+dc = GetMaskSum(dc, mesh, MASK); decoder = dc;
 Error = ErrorJSCE(dc, ClassificationTarget(dc.count_outputs(), length(unique(TrainLabel))), 20, 0.1);
 
-epoch = 4;
-batch = 20;
-cycle = 6000;
-speed = 0.3;
-slowdown = 0.9995;
-training1;
+param.epoch = 4;
+param.batch = 20;
+param.cycle = param.epoch*size(Train,3)/10;
+param.speed = 0.3;
+param.slowdown = 0.9995;
+param.predictor = decoder;
+GetTraining(Error,Train,TrainLabel,param);
 
 [err, ~, int] = GetTest(decoder, Test, TestLabel, 40);
 plot_error_table(err, Labels);
@@ -66,14 +67,14 @@ dc.add_next(SincPropagator(dc, f, lambda));
 dc = GetMaskSum(dc, mesh_doe, MASK); decoder = dc;
 dc = NormalizationSUM(dc); 
 Error = ErrorSCE(dc, ClassificationTarget(dc.count_outputs(), length(unique(TrainLabel))), 80);
-predictor = Error;
 
-epoch = 4;
-batch = 20;
-cycle = 6000;
-speed = 0.3;
-slowdown = 0.9995;
-training1;
+param.epoch = 4;
+param.batch = 20;
+param.cycle = param.epoch*size(Train,3)/10;
+param.speed = 0.3;
+param.slowdown = 0.9995;
+param.predictor = decoder;
+GetTraining(Error,Train,TrainLabel,param);
 
 [err_off, int_off] = GetTestOffset(decoder, Test, TestLabel, 2, doe.Errors{1}, 40);
 plot_error_offset(err_off);
@@ -105,15 +106,17 @@ dc = SincPropagator(dc, f, lambda);
 dc = FullDOE(dc, mesh, PhaseType, AdamFabric()); doe = dc;
 dc = SincPropagator(dc, f, lambda);
 dc = GetMaskSum(dc, mesh, MASK); decoder = dc;
-predictor = NormalizationSUM(dc);
-Error = ErrorSCE(predictor, ClassificationTarget(dc.count_outputs(), length(unique(TrainLabel))), 80);
+dc = NormalizationSUM(dc);
+Error = ErrorSCE(dc, ClassificationTarget(dc.count_outputs(), length(unique(TrainLabel))), 80);
 
-epoch = 2;
-batch = 4;
-cycle = size(Train,3)*epoch/20;
-speed = 0.3;
-slowdown = 0.01^(batch/epoch/size(Train,3));
-training1;
+param.epoch = 2;
+param.batch = 20;
+param.max_batch = 5;
+param.cycle = param.epoch*size(Train,3)/20;
+param.speed = 0.3;
+param.slowdown = 0.01^(param.batch/param.epoch/size(Train,3));
+param.predictor = decoder;
+GetTraining(Error,Train,TrainLabel,param);
 
 [err, ~, int] = GetTest(decoder, Test, TestLabel, 10);
 plot_error_table(err, Labels);
@@ -155,16 +158,16 @@ dc = ASMPropagator(dc, f, lambda);
 dc = GetFullIntensity(dc, mesh);
 Error = ErrorMSE(dc, GenerationTarget(Target));
 
-batch = size(Train,3);
-epoch = batch*2000;
-cycle = epoch*batch/10;
-speed = 1;
-slowdown = 0.9992;
-training1;
+param.batch = size(Train,3);
+param.epoch = param.batch*2000;
+param.cycle = param.epoch*param.batch/10;
+param.speed = 1;
+param.slowdown = 0.9992;
+GetTraining(Error,Train,TrainLabel,param);
 
 for iter=1:size(Train,3)
-    figure;
-    imagesc(dc.intensity(Train(:,:,iter)));
+    dc.clear();
+    figure; imagesc(dc.intensity(Train(:,:,iter)));
 end
 
 %% 1-dimension image generation
@@ -189,11 +192,11 @@ dc = SincPropagator(dc, f, lambda);
 dc = GetFullIntensity(dc, mesh_out);
 Error = ErrorMSE(dc, GenerationTarget(Target));
 
-epoch = 100000;
-cycle = epoch/20;
-speed = 1e-2;
-slowdown = 0.99995;
-training1;
+param.epoch = 100000;
+param.cycle = param.epoch/20;
+param.speed = 1e-2;
+param.slowdown = 0.99995;
+GetTraining(Error,Train,TrainLabel,param);
 
 plot(dc.intensity(Train));
 hold on;
