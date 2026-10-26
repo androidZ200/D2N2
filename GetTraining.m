@@ -1,4 +1,4 @@
-function GetTraining(Error, Train, TrainLabel, parameters)
+function GetTraining(Error, Train, TrainLabel, parameters, predictor)
 % gradient learning method
     mustBeA(Error, "ErrorFunction");
     
@@ -36,8 +36,8 @@ function GetTraining(Error, Train, TrainLabel, parameters)
             else
                 loss = loss*0.99 + 0.01*mean(err);
             end
-            if isfield(parameters, 'predictor') && isa(parameters.predictor, "Predictor")
-                pred = parameters.predictor.get_prediction();
+            if nargin > 4 && isa(predictor, "Predictor")
+                pred = predictor.get_prediction();
                 if isempty(accr)
                     accr = mean(pred == num);
                 else

@@ -26,8 +26,7 @@ param.batch = 20;
 param.cycle = param.epoch*size(Train,3)/10;
 param.speed = 0.3;
 param.slowdown = 0.9995;
-param.predictor = decoder;
-GetTraining(Error,Train,TrainLabel,param);
+GetTraining(Error,Train,TrainLabel,param,decoder);
 
 [err, ~, int] = GetTest(decoder, Test, TestLabel, 40);
 plot_error_table(err, Labels);
@@ -73,8 +72,7 @@ param.batch = 20;
 param.cycle = param.epoch*size(Train,3)/10;
 param.speed = 0.3;
 param.slowdown = 0.9995;
-param.predictor = decoder;
-GetTraining(Error,Train,TrainLabel,param);
+GetTraining(Error,Train,TrainLabel,param,decoder);
 
 [err_off, int_off] = GetTestOffset(decoder, Test, TestLabel, 2, doe.Errors{1}, 40);
 plot_error_offset(err_off);
@@ -116,8 +114,7 @@ param.batch = 20;
 param.cycle = param.epoch*size(Train,3)/10;
 param.speed = 0.5;
 param.slowdown = 0.9995;
-param.predictor = decoder;
-GetTraining(Error,Train,TrainLabel,param);
+GetTraining(Error,Train,TrainLabel,param,decoder);
 
 [err, ~, int] = GetTest(decoder, Test, TestLabel, 40);
 plot_error_table(err, Labels);
@@ -170,8 +167,7 @@ param.max_batch = 5;
 param.cycle = param.epoch*size(Train,3)/20;
 param.speed = 0.3;
 param.slowdown = 0.01^(param.batch/param.epoch/size(Train,3));
-param.predictor = decoder;
-GetTraining(Error,Train,TrainLabel,param);
+GetTraining(Error,Train,TrainLabel,param,decoder);
 
 [err, ~, int] = GetTest(decoder, Test, TestLabel, 10);
 plot_error_table(err, Labels);
