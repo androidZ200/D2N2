@@ -23,6 +23,7 @@ Error = ErrorJSCE(dc, ClassificationTarget(dc.count_outputs(), length(unique(Tra
 
 param.epoch = 4;
 param.batch = 20;
+param.max_batch = 10;
 param.cycle = param.epoch*size(Train,3)/10;
 param.speed = 0.3;
 param.slowdown = 0.9995;

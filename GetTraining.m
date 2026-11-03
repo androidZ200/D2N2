@@ -15,6 +15,7 @@ function GetTraining(Error, Train, TrainLabel, parameters, predictor)
     tt1 = tic;
     loss = []; accr = [];
     accrline = [];
+    end_line = [];
     speed = parameters.speed;
     ndisp();
     
@@ -23,9 +24,11 @@ function GetTraining(Error, Train, TrainLabel, parameters, predictor)
         randind = [randind randperm(size(Train,3), size(Train,3))];
     end
     
-    for iter7=1:parameters.batch:length(randind)   
+    for iter7=1:parameters.batch:length(randind)
+        tt2 = tic;
         for iter9=0:parameters.max_batch:(parameters.batch-1)
-            index = randind(iter7+iter9+(0:min(parameters.max_batch-1, length(randind)-iter7-iter9)));
+            end_index = min([iter7+iter9+parameters.max_batch-1; iter7+parameters.batch-1; length(randind)]);
+            index = randind((iter7+iter9):end_index);
             num = reshape(TrainLabel(index),1,[]);
             
             % direct propagation
@@ -50,8 +53,10 @@ function GetTraining(Error, Train, TrainLabel, parameters, predictor)
             progres = (iter7+iter9+parameters.max_batch-1) / length(randind);
             first_line = ['[' num2str(progres*100,'%05.2f') '%]; loss = ' num2str(loss,'%.5e') ...
                 accrline '; time = ' num2str(toc(tt1)) ';'];
-            rdisp([first_line '\n' waitbartext(50, progres)]);
+            rdisp([first_line '\n' waitbartext(50, progres) ...
+                '\n' end_line]);
         end
+        end_line = [num2str((end_index-iter7+1)/toc(tt2), '%.0f') ' images per second'];
     
         % updating weights
         Error.minimize(speed);
