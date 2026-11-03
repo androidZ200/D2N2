@@ -15,6 +15,7 @@ function min_contrast = plot_intensity_table(intensity_table, Labels)
         end
     end
     T = sort(intensity_table);
+    axis square;
     min_contrast = min((T(end,:) - T(end-1,:))./(T(end,:) + T(end-1,:))*100);
     title(['min contrast = ' replace(num2str(min_contrast), '.', ',') '%;']);
 end

@@ -11,4 +11,5 @@ function plot_error_offset(error_offset)
                 'fontsize', 14, 'color', color, 'HorizontalAlignment', 'center');
         end
     end
+    axis square;
 end
