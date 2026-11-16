@@ -18,7 +18,7 @@ classdef ScoreSpliter < Decoder & Predictor
             [~,pred] = max(obj.input,[],1);
         end
         function score = get_output(obj, input)
-            if isempty(obj.input)
+            if obj.count == 0
                 obj.input = obj.decoder.get_output(input);
             end
             score = obj.input;
@@ -39,6 +39,7 @@ classdef ScoreSpliter < Decoder & Predictor
             obj.count = obj.count - 1;
             if obj.count == 0
                 obj.decoder.set_error_field(obj.error);
+                obj.error = [];
             end
         end
         function gradient_step(obj, speed)

@@ -41,7 +41,7 @@ classdef BeamSplitter < Prop
         end
 
         function field = get_field(obj, input)
-            if isempty(obj.field)
+            if obj.counter == 0
                 obj.field = obj.prev_node.get_field(input);
             end
             field = obj.field;
@@ -65,6 +65,7 @@ classdef BeamSplitter < Prop
             obj.counter = obj.counter - 1;
             if obj.counter == 0
                 obj.prev_node.set_error_field(obj.error);
+                obj.error = [];
             end
         end
 

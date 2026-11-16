@@ -1,13 +1,14 @@
 function GetTraining(Error, Train, TrainLabel, parameters, predictor)
 % gradient learning method
     mustBeA(Error, "ErrorFunction");
-    
+    find_optimal_mb = false;
+
     if nargin < 4; parameters = []; end
     if ~isfield(parameters, 'epoch'); parameters.epoch = 1; end
     if ~isfield(parameters, 'speed'); parameters.speed = 1; end
     if ~isfield(parameters, 'slowdown'); parameters.slowdown = 1; end
     if ~isfield(parameters, 'batch'); parameters.batch = 1; end
-    if ~isfield(parameters, 'max_batch'); parameters.max_batch = parameters.batch; end
+    if ~isfield(parameters, 'max_batch'); parameters.max_batch = 1; find_optimal_mb = true; end
     
     parameters.batch = min(parameters.batch, size(Train,3));
     parameters.max_batch = min(parameters.batch, parameters.max_batch);
@@ -18,6 +19,15 @@ function GetTraining(Error, Train, TrainLabel, parameters, predictor)
     end_line = [];
     speed = parameters.speed;
     ndisp();
+
+    if find_optimal_mb
+        mb_div = 1:parameters.batch;
+        mb_div = mb_div(find(rem(parameters.batch, mb_div) == 0));
+        count_avg_mb = 20;
+        table_mb = inf(length(mb_div), count_avg_mb);
+        iter_mb_div = 1;
+        iter_mb_avg = 1;
+    end
     
     randind = [];
     for iter8=1:parameters.epoch
@@ -56,7 +66,25 @@ function GetTraining(Error, Train, TrainLabel, parameters, predictor)
             rdisp([first_line '\n' waitbartext(50, progres) ...
                 '\n' end_line]);
         end
-        end_line = [num2str((end_index-iter7+1)/toc(tt2), '%.0f') ' images per second'];
+        mb_speed = (end_index-iter7+1)/toc(tt2);
+        end_line = ['mb = ' num2str(parameters.max_batch) '; ' num2str(mb_speed, '%.0f') ' images per second'];
+
+        % find optimal max batch
+        if find_optimal_mb
+            table_mb(iter_mb_div, iter_mb_avg) = mb_speed;
+            iter_mb_avg = iter_mb_avg + 1;
+            if iter_mb_avg > count_avg_mb
+                iter_mb_div = iter_mb_div + 1;
+                iter_mb_avg = 1;
+            end
+            if iter_mb_div > length(mb_div)
+                [~, min_ind_mb] = max(sum(table_mb,2));
+                parameters.max_batch = mb_div(min_ind_mb);
+                find_optimal_mb = false;
+            else
+                parameters.max_batch = mb_div(iter_mb_div);
+            end
+        end
     
         % updating weights
         Error.minimize(speed);
