@@ -70,19 +70,17 @@ classdef BeamSplitter < Prop
         end
 
         function gradient_step(obj, speed)
-            if ~isempty(obj.error)
+            if ~isempty(obj.field)
                 obj.prev_node.gradient_step(speed);
-                obj.error = [];
+                obj.field = [];
             end
         end
 
         function clear(obj)
-            if ~isempty(obj.field)
-                obj.error = [];
-                obj.field = [];
-                obj.counter = 0;
-                obj.prev_node.clear();
-            end
+            obj.error = [];
+            obj.field = [];
+            obj.counter = 0;
+            obj.prev_node.clear();
         end
     end
 end
