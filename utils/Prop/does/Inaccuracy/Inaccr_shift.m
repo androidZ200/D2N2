@@ -7,6 +7,7 @@ classdef Inaccr_shift < Inaccuracy
     
     methods
         function obj = Inaccr_shift(max_shift)
+            if isscalar(max_shift); max_shift = repelem(max_shift, 1, 2); end
             obj.max_shifts = max_shift;
         end
         
@@ -26,7 +27,8 @@ classdef Inaccr_shift < Inaccuracy
         function new_function = apply_child(obj, transmission_function)
             if isempty(obj.current_shift)
                 if isempty(obj.fixed_shift)
-                    obj.current_shift = randi(obj.max_shifts*2+1,[1 2])-obj.max_shifts-1;
+                    obj.current_shift(1) = randi(obj.max_shifts(1)*2+1)-obj.max_shifts(1)-1;
+                    obj.current_shift(2) = randi(obj.max_shifts(2)*2+1)-obj.max_shifts(2)-1;
                 else
                     obj.current_shift = obj.fixed_shift;
                 end
