@@ -11,12 +11,11 @@ lambda = 632.8e-9;
 f = 0.01;
 mesh = Mesh(4e-6, 512);
 mesh_inp = Mesh(8e-6, 28);
-opt = AdamFabric();
 MASK = mask10_1(mesh,[1.2e-3, 0.9e-3],100e-6);
 
 dc = InputModulator(mesh_inp, lambda, @(W)normalize_field(W));
 dc = SincPropagator(dc, f);
-dc = FullDOE(dc, mesh, PhaseType, opt); doe = dc;
+dc = FullDOE(dc, mesh, PhaseType, AdamFabric); doe = dc;
 dc = ASMPropagator(dc, f);
 dc = GetMaskSum(dc, mesh, MASK); decoder = dc;
 Error = ErrorJSCE(dc, ClassificationTarget(dc.count_outputs(), length(unique(TrainLabel))), 20, 0.1);
@@ -29,8 +28,9 @@ param.slowdown = 0.9995;
 GetTraining(Error,Train,TrainLabel,param,decoder);
 
 [err, ~, int] = GetTest(decoder, Test, TestLabel, 40);
-plot_error_table(err, Labels);
-plot_intensity_table(int, Labels);
+figure;
+subplot(1,2,1); plot_error_table(err, Labels);
+subplot(1,2,2); plot_intensity_table(int, Labels);
 
 %% 4F-system
 
@@ -75,8 +75,8 @@ param.slowdown = 0.9995;
 GetTraining(Error,Train,TrainLabel,param,decoder);
 
 [err_off, int_off] = GetTestOffset(decoder, Test, TestLabel, 2, doe.Errors{1}, 40);
-plot_error_offset(err_off);
-plot_intensity_offset(int_off);
+figure; plot_error_offset(err_off);
+figure; plot_intensity_offset(int_off);
 
 %% example parallel system
 
@@ -117,8 +117,8 @@ param.slowdown = 0.9995;
 GetTraining(Error,Train,TrainLabel,param,decoder);
 
 [err, ~, int] = GetTest(decoder, Test, TestLabel, 40);
-plot_error_table(err, Labels);
-plot_intensity_table(int, Labels);
+figure; plot_error_table(err, Labels);
+figure; plot_intensity_table(int, Labels);
 
 % create new system from old
 dc = InputModulator(mesh_inp, lambda);
@@ -129,8 +129,8 @@ dc = GetMaskSum(dc, mesh, MASK);
 decoder = NormalizationSUM(dc);
 
 [err, ~, int] = GetTest(decoder, Test, TestLabel, 40);
-plot_error_table(err, Labels);
-plot_intensity_table(int, Labels);
+figure; plot_error_table(err, Labels);
+figure; plot_intensity_table(int, Labels);
 
 %% example of a quasi-coherent source
 
@@ -170,8 +170,8 @@ param.slowdown = 0.01^(param.batch/param.epoch/size(Train,3));
 GetTraining(Error,Train,TrainLabel,param,decoder);
 
 [err, ~, int] = GetTest(decoder, Test, TestLabel, 10);
-plot_error_table(err, Labels);
-plot_intensity_table(int, Labels);
+figure; plot_error_table(err, Labels);
+figure; plot_intensity_table(int, Labels);
 
 %% example image generation
 
